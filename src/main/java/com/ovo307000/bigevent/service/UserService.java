@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service("userService")
@@ -29,9 +30,13 @@ public class UserService
         }
         else
         {
-            User newUser = new User(user.getNickname(), user.getPassword());
+            User newUser = new User();
 
+            user.setCreateTime(LocalDateTime.now());
+            user.setUpdateTime(LocalDateTime.now());
+            user.setNickname(user.getNickname());
             user.setPassword(SHA256Encrypted.encrypt(user.getPassword()));
+
             this.userRepository.save(newUser);
         }
     }
