@@ -25,4 +25,23 @@ public class UserController
 
         return Result.success();
     }
+
+
+    /*
+     * 采用用户名和密码登录，因为在应用层出错后，会抛出异常，所以在这采用try-catch捕获异常
+     * */
+    @PostMapping("/login")
+    public Result<?> login(String nickname, String password)
+    {
+        try
+        {
+            this.userService.login(new User(nickname, password));
+        }
+        catch (IllegalArgumentException e)
+        {
+            return Result.fail(e.getMessage());
+        }
+
+        return Result.success();
+    }
 }

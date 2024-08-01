@@ -21,10 +21,27 @@ public class UserService
 
     public void register(@NotNull User user)
     {
-        Optional.ofNullable(this.userRepository.findUsersByNickname(user.getNickname()))
-                .ifPresentOrElse((User u) ->
-                                 {
-                                     throw new IllegalArgumentException("User already exists");
-                                 }, () -> this.userRepository.save(user));
+        if (this.isUserExists(user))
+        {
+            throw new IllegalArgumentException("User already exists");
+        }
+        else
+        {
+            this.userRepository.save(user);
+        }
+    }
+
+    public boolean isUserExists(@NotNull User user)
+    {
+        return Optional.ofNullable(this.userRepository.findUsersByNickname(user.getNickname()))
+                       .isPresent();
+    }
+
+    public void login(@NotNull User user)
+    {
+        if (! this.isUserExists(user))
+        {
+            throw new IllegalArgumentException("User does not exist");
+        }
     }
 }
