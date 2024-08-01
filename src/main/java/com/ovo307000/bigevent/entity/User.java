@@ -18,7 +18,7 @@ public class User
     @Column(unique = true, nullable = false, length = 20)
     private String username;
 
-    @Column(length = 32)
+    @Column(length = 256)
     private String password;
 
     @Column(length = 10)
@@ -69,9 +69,9 @@ public class User
     {
     }
 
-    public User(String nickname, String password)
+    public User(String username, String password)
     {
-        this.nickname = nickname;
+        this.username = username;
         this.password = password;
     }
 
