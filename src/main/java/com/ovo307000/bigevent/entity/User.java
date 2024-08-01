@@ -69,6 +69,12 @@ public class User
     {
     }
 
+    public User(String nickname, String password)
+    {
+        this.nickname = nickname;
+        this.password = password;
+    }
+
     @Override
     public int hashCode()
     {
