@@ -32,10 +32,10 @@ public class UserService
         {
             User newUser = new User();
 
-            user.setCreateTime(LocalDateTime.now());
-            user.setUpdateTime(LocalDateTime.now());
-            user.setNickname(user.getNickname());
-            user.setPassword(SHA256Encrypted.encrypt(user.getPassword()));
+            newUser.setCreateTime(LocalDateTime.now());
+            newUser.setUpdateTime(LocalDateTime.now());
+            newUser.setUsername(user.getUsername());
+            newUser.setPassword(SHA256Encrypted.encrypt(user.getPassword()));
 
             this.userRepository.save(newUser);
         }
@@ -43,13 +43,13 @@ public class UserService
 
     public boolean isUserExists(@NotNull User user)
     {
-        return Optional.ofNullable(this.userRepository.findUsersByNickname(user.getNickname()))
+        return Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
                        .isPresent();
     }
 
     public void login(@NotNull User user)
     {
-        Optional.ofNullable(this.userRepository.findUsersByNickname(user.getNickname()))
+        Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
                 .ifPresentOrElse((User userInDatabase) ->
                                  {
                                      if (! this.isPasswordCorrect(user))
@@ -73,5 +73,15 @@ public class UserService
         {
             throw new RuntimeException(e);
         }
+    }
+
+    public User findUserByNickname(String nickname)
+    {
+        return this.userRepository.findUsersByNickname(nickname);
+    }
+
+    public User findUserByUsername(String username)
+    {
+        return this.userRepository.findUsersByUsername(username);
     }
 }
