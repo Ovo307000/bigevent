@@ -2,10 +2,12 @@ package com.ovo307000.bigevent.service;
 
 import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.repository.UserRepository;
+import com.ovo307000.bigevent.surety.encrypted.SHA256Encrypted;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 @Service("userService")
@@ -19,7 +21,7 @@ public class UserService
         this.userRepository = userRepository;
     }
 
-    public void register(@NotNull User user)
+    public void register(@NotNull User user) throws NoSuchAlgorithmException
     {
         if (this.isUserExists(user))
         {
@@ -27,7 +29,10 @@ public class UserService
         }
         else
         {
-            this.userRepository.save(user);
+            User newUser = new User(user.getNickname(), user.getPassword());
+
+            user.setPassword(SHA256Encrypted.encrypt(user.getPassword()));
+            this.userRepository.save(newUser);
         }
     }
 
@@ -39,9 +44,29 @@ public class UserService
 
     public void login(@NotNull User user)
     {
-        if (! this.isUserExists(user))
+        Optional.ofNullable(this.userRepository.findUsersByNickname(user.getNickname()))
+                .ifPresentOrElse((User userInDatabase) ->
+                                 {
+                                     if (! this.isPasswordCorrect(user))
+                                     {
+                                         throw new IllegalArgumentException("Password is incorrect");
+                                     }
+                                 }, () ->
+                                 {
+                                     throw new IllegalArgumentException("User does not exist");
+                                 });
+    }
+
+    public boolean isPasswordCorrect(@NotNull User user)
+    {
+        try
         {
-            throw new IllegalArgumentException("User does not exist");
+            return user.getPassword()
+                       .equals(SHA256Encrypted.encrypt(user.getPassword()));
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 }
