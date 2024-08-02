@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -105,7 +104,13 @@ public class UserService
 
         user.setUpdateTime(LocalDateTime.now());
 
-        int updatedCount = this.userRepository.updateUserByUsername(user.getUsername(), user);
+        int updatedCount = this.userRepository.updateUserByUsername(user.getUsername(),
+                                                                    user.getUsername(),
+                                                                    user.getNickname(),
+                                                                    user.getPassword(),
+                                                                    user.getEmail(),
+                                                                    user.getUserPic(),
+                                                                    LocalDateTime.now());
 
         log.info("Updated {} users", updatedCount);
     }
