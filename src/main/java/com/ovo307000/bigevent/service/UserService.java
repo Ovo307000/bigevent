@@ -81,7 +81,7 @@ public class UserService
             String userInDatabasePassword = this.userRepository.findUsersByUsername(user.getUsername())
                                                                .getPassword();
 
-            log.debug("Equaling passwords: {} and {}", userInDatabasePassword, encryptedPassword);
+            log.debug("Equaling passwords [User input: {}, Database: {}]", encryptedPassword, userInDatabasePassword);
 
             return Objects.equals(userInDatabasePassword, encryptedPassword);
         }

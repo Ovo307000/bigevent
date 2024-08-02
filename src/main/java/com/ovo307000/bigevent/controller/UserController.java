@@ -1,7 +1,9 @@
 package com.ovo307000.bigevent.controller;
 
 import com.ovo307000.bigevent.entity.User;
+import com.ovo307000.bigevent.excaption.PasswordNotMatchException;
 import com.ovo307000.bigevent.excaption.UserAlreadyExistsException;
+import com.ovo307000.bigevent.excaption.UserNotExistsException;
 import com.ovo307000.bigevent.result.Result;
 import com.ovo307000.bigevent.service.UserService;
 import jakarta.validation.constraints.Pattern;
@@ -69,11 +71,17 @@ public class UserController
 
             this.userService.login(new User(username, password));
         }
-        catch (IllegalArgumentException e)
+        catch (PasswordNotMatchException passwordNotMatchException)
         {
-            log.error("Login failed: {}", e.getMessage());
+            log.error("Login failed due to incorrect password: {}", passwordNotMatchException.getMessage());
 
-            return Result.fail(e.getMessage());
+            return Result.fail(passwordNotMatchException.getMessage());
+        }
+        catch (UserNotExistsException userNotExistsException)
+        {
+            log.error("Login failed due to user not exists: {}", userNotExistsException.getMessage());
+
+            return Result.fail(userNotExistsException.getMessage());
         }
 
         log.info("Login successful: {}", username);
