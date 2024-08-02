@@ -3,7 +3,6 @@ package com.ovo307000.bigevent.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
