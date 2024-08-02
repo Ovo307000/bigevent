@@ -1,6 +1,7 @@
 package com.ovo307000.bigevent.service;
 
 import com.ovo307000.bigevent.entity.User;
+import com.ovo307000.bigevent.properties.ResignedProperties;
 import com.ovo307000.bigevent.repository.UserRepository;
 import com.ovo307000.bigevent.surety.encrypted.SHA256Encrypted;
 import org.jetbrains.annotations.NotNull;
@@ -18,13 +19,15 @@ import java.util.Optional;
 @Service("userService")
 public class UserService
 {
-    private static final Logger         log = LoggerFactory.getLogger(UserService.class);
-    private final        UserRepository userRepository;
+    private static final Logger             log = LoggerFactory.getLogger(UserService.class);
+    private final        UserRepository     userRepository;
+    private final        ResignedProperties resignedProperties;
 
     @Autowired
-    public UserService(UserRepository userRepository)
+    public UserService(UserRepository userRepository, ResignedProperties resignedProperties)
     {
-        this.userRepository = userRepository;
+        this.userRepository     = userRepository;
+        this.resignedProperties = resignedProperties;
     }
 
     public void register(@NotNull User user) throws NoSuchAlgorithmException
@@ -32,6 +35,16 @@ public class UserService
         if (this.isUserExists(user))
         {
             throw new IllegalArgumentException("User already exists");
+        }
+        if (user.getUsername()
+                .length() < this.resignedProperties.getPasswordLength())
+        {
+            throw new IllegalArgumentException("Username is too short");
+        }
+        if (user.getPassword()
+                .length() < this.resignedProperties.getPasswordLength())
+        {
+            throw new IllegalArgumentException("Password is too short");
         }
         else
         {
@@ -100,6 +113,16 @@ public class UserService
         if (! this.isUserExists(user))
         {
             throw new IllegalArgumentException("User does not exist");
+        }
+        if (user.getPassword()
+                .length() < this.resignedProperties.getPasswordLength())
+        {
+            throw new IllegalArgumentException("Password is too short");
+        }
+        if (user.getNickname()
+                .length() < this.resignedProperties.getNicknameLength())
+        {
+            throw new IllegalArgumentException("Nickname is too short");
         }
 
         user.setUpdateTime(LocalDateTime.now());

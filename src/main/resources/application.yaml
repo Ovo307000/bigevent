@@ -1,4 +1,4 @@
-spring :
+spring  :
   application:
     name: big-event
 
@@ -18,6 +18,11 @@ spring :
 
     open-in-view: true
 
-logging:
+logging :
   level:
     com: debug
+
+resigned:
+  default-password: 123456
+  nickname-length : 2
+  password-length : 6
