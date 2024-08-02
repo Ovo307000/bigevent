@@ -3,6 +3,7 @@ package com.ovo307000.bigevent.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
@@ -73,6 +74,15 @@ public class User
     {
         this.username = username;
         this.password = password;
+    }
+
+    public User(String username, String password, String nickname, String email, String userPic)
+    {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.email    = email;
+        this.userPic  = userPic;
     }
 
     @Override

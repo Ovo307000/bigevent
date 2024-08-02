@@ -4,17 +4,23 @@ import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.repository.UserRepository;
 import com.ovo307000.bigevent.surety.encrypted.SHA256Encrypted;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service("userService")
 public class UserService
 {
-    private final UserRepository userRepository;
+    private static final Logger         log = LoggerFactory.getLogger(UserService.class);
+    private final        UserRepository userRepository;
 
     @Autowired
     public UserService(UserRepository userRepository)
@@ -66,8 +72,13 @@ public class UserService
     {
         try
         {
-            return user.getPassword()
-                       .equals(SHA256Encrypted.encrypt(user.getPassword()));
+            String encryptedPassword = SHA256Encrypted.encrypt(user.getPassword());
+            String userInDatabasePassword = this.userRepository.findUsersByUsername(user.getUsername())
+                                                               .getPassword();
+
+            log.debug("Equaling passwords: {} and {}", userInDatabasePassword, encryptedPassword);
+
+            return Objects.equals(userInDatabasePassword, encryptedPassword);
         }
         catch (NoSuchAlgorithmException e)
         {
@@ -75,7 +86,7 @@ public class UserService
         }
     }
 
-    public User findUserByNickname(String nickname)
+    public List<User> findUserByNickname(String nickname)
     {
         return this.userRepository.findUsersByNickname(nickname);
     }
@@ -83,5 +94,19 @@ public class UserService
     public User findUserByUsername(String username)
     {
         return this.userRepository.findUsersByUsername(username);
+    }
+
+    public void updateUser(User user)
+    {
+        if (! this.isUserExists(user))
+        {
+            throw new IllegalArgumentException("User does not exist");
+        }
+
+        user.setUpdateTime(LocalDateTime.now());
+
+        int updatedCount = this.userRepository.updateUserByUsername(user.getUsername(), user);
+
+        log.info("Updated {} users", updatedCount);
     }
 }

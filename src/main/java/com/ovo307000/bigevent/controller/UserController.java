@@ -5,12 +5,10 @@ import com.ovo307000.bigevent.result.Result;
 import com.ovo307000.bigevent.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @RequestMapping("/user")
 @RestController("userController")
@@ -53,15 +51,25 @@ public class UserController
         {
             log.error("Login failed: {}", e.getMessage());
 
-            return Result.fail();
+            return Result.fail(e.getMessage());
         }
 
         log.info("Login successful: {}", username);
         return Result.success();
     }
 
+    @PutMapping("/updateUser")
+    public Result<?> updateUser(String username, String password, String nickname, String email, String userPic)
+    {
+        log.info("Updating user: {}", username);
+
+        this.userService.updateUser(new User(username, password, nickname, email, userPic));
+
+        return Result.success();
+    }
+
     @GetMapping("/findUserByNickname")
-    public Result<User> findUserByNickname(String nickname)
+    public Result<List<User>> findUserByNickname(String nickname)
     {
         log.info("Finding user by nickname: {}", nickname);
 
