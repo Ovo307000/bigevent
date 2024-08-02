@@ -7,49 +7,59 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "resigned")
 public class ResignedProperties
 {
-    private Integer passwordLength;
-    private Integer nicknameLength;
-    private String  defaultPassword;
+    private String usernameRegex;
+    private String nicknameRegex;
+    private String emailRegex;
+    private String userPicRegex;
+    private String passwordRegex;
 
-
-    public ResignedProperties()
+    public String getUsernameRegex()
     {
+        return this.usernameRegex;
     }
 
-    public ResignedProperties(Integer passwordLength, Integer nicknameLength, String defaultPassword)
+    public void setUsernameRegex(String usernameRegex)
     {
-        this.passwordLength  = passwordLength;
-        this.nicknameLength  = nicknameLength;
-        this.defaultPassword = defaultPassword;
+        this.usernameRegex = usernameRegex;
     }
 
-    public Integer getPasswordLength()
+    public String getNicknameRegex()
     {
-        return this.passwordLength;
+        return this.nicknameRegex;
     }
 
-    public void setPasswordLength(Integer passwordLength)
+    public void setNicknameRegex(String nicknameRegex)
     {
-        this.passwordLength = passwordLength;
+        this.nicknameRegex = nicknameRegex;
     }
 
-    public Integer getNicknameLength()
+    public String getEmailRegex()
     {
-        return this.nicknameLength;
+        return this.emailRegex;
     }
 
-    public void setNicknameLength(Integer nicknameLength)
+    public void setEmailRegex(String emailRegex)
     {
-        this.nicknameLength = nicknameLength;
+        this.emailRegex = emailRegex;
     }
 
-    public String getDefaultPassword()
+    public String getUserPicRegex()
     {
-        return this.defaultPassword;
+        return this.userPicRegex;
     }
 
-    public void setDefaultPassword(String defaultPassword)
+    public void setUserPicRegex(String userPicRegex)
     {
-        this.defaultPassword = defaultPassword;
+        this.userPicRegex = userPicRegex;
+    }
+
+    public String getPasswordRegex()
+    {
+        return this.passwordRegex;
+    }
+
+    public void setPasswordRegex(String passwordRegex)
+    {
+        this.passwordRegex = passwordRegex;
     }
 }

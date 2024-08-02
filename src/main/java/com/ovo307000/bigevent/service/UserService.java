@@ -1,13 +1,17 @@
 package com.ovo307000.bigevent.service;
 
+import com.ovo307000.bigevent.constant.ResultConstant;
 import com.ovo307000.bigevent.entity.User;
-import com.ovo307000.bigevent.properties.ResignedProperties;
+import com.ovo307000.bigevent.excaption.PasswordNotMatchException;
+import com.ovo307000.bigevent.excaption.UserAlreadyExistsException;
+import com.ovo307000.bigevent.excaption.UserNotExistsException;
 import com.ovo307000.bigevent.repository.UserRepository;
 import com.ovo307000.bigevent.surety.encrypted.SHA256Encrypted;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -19,32 +23,21 @@ import java.util.Optional;
 @Service("userService")
 public class UserService
 {
-    private static final Logger             log = LoggerFactory.getLogger(UserService.class);
-    private final        UserRepository     userRepository;
-    private final        ResignedProperties resignedProperties;
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, ResignedProperties resignedProperties)
+    public UserService(@Qualifier("userRepository") UserRepository userRepository)
     {
-        this.userRepository     = userRepository;
-        this.resignedProperties = resignedProperties;
+        this.userRepository = userRepository;
     }
 
-    public void register(@NotNull User user) throws NoSuchAlgorithmException
+    public void register(@NotNull User user) throws NoSuchAlgorithmException, UserAlreadyExistsException
     {
         if (this.isUserExists(user))
         {
-            throw new IllegalArgumentException("User already exists");
-        }
-        if (user.getUsername()
-                .length() < this.resignedProperties.getPasswordLength())
-        {
-            throw new IllegalArgumentException("Username is too short");
-        }
-        if (user.getPassword()
-                .length() < this.resignedProperties.getPasswordLength())
-        {
-            throw new IllegalArgumentException("Password is too short");
+            throw new UserAlreadyExistsException(ResultConstant.USER_ALREADY_EXISTS.getMessage());
         }
         else
         {
@@ -72,11 +65,11 @@ public class UserService
                                  {
                                      if (! this.isPasswordCorrect(user))
                                      {
-                                         throw new IllegalArgumentException("Password is incorrect");
+                                         throw new PasswordNotMatchException(ResultConstant.PASSWORD_INCORRECT.getMessage());
                                      }
                                  }, () ->
                                  {
-                                     throw new IllegalArgumentException("User does not exist");
+                                     throw new UserNotExistsException(ResultConstant.USER_NOT_EXISTS.getMessage());
                                  });
     }
 
@@ -94,6 +87,8 @@ public class UserService
         }
         catch (NoSuchAlgorithmException e)
         {
+            log.error("Encryption algorithm not found: {}", e.getMessage());
+
             throw new RuntimeException(e);
         }
     }
@@ -112,17 +107,7 @@ public class UserService
     {
         if (! this.isUserExists(user))
         {
-            throw new IllegalArgumentException("User does not exist");
-        }
-        if (user.getPassword()
-                .length() < this.resignedProperties.getPasswordLength())
-        {
-            throw new IllegalArgumentException("Password is too short");
-        }
-        if (user.getNickname()
-                .length() < this.resignedProperties.getNicknameLength())
-        {
-            throw new IllegalArgumentException("Nickname is too short");
+            throw new UserNotExistsException(ResultConstant.USER_NOT_EXISTS.getMessage());
         }
 
         user.setUpdateTime(LocalDateTime.now());
