@@ -137,11 +137,9 @@ public class UserChecker
         {
             return new EmailFormatException("Email is not in whitelist");
         }
+        if (! email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"))
         {
-            if (! email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"))
-            {
-                return new EmailFormatException("Email is invalid");
-            }
+            return new EmailFormatException("Email is invalid");
         }
 
         return null;
