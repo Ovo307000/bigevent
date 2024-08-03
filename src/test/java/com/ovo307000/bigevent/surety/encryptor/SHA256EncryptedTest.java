@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.surety.encrypted;
+package com.ovo307000.bigevent.surety.encryptor;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -17,6 +17,6 @@ class SHA256EncryptedTest
     {
         String encrypted = SHA256Encrypted.encrypt("test");
 
-        log.info("encrypted: {}", encrypted);
+        log.info("encryptor: {}", encrypted);
     }
 }

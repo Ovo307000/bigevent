@@ -6,7 +6,7 @@ import com.ovo307000.bigevent.excaption.PasswordNotMatchException;
 import com.ovo307000.bigevent.excaption.UserAlreadyExistsException;
 import com.ovo307000.bigevent.excaption.UserNotExistsException;
 import com.ovo307000.bigevent.repository.UserRepository;
-import com.ovo307000.bigevent.surety.encrypted.SHA256Encrypted;
+import com.ovo307000.bigevent.surety.encryptor.SHA256Encrypted;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
