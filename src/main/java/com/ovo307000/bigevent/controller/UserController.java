@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Objects;
 
 @RequestMapping("/user")
 @RestController("userController")
@@ -99,10 +100,19 @@ public class UserController
     }
 
     @GetMapping("/findUserByUsername")
-    public Result<User> findUserByUsername(String username)
+    public Result<?> findUserByUsername(String username)
     {
         log.info("Finding user by username: {}", username);
 
-        return Result.success(this.userService.findUserByUsername(username));
+        User user = this.userService.findUserByUsername(username);
+
+        if (user == null)
+        {
+            return Result.fail("User not exists");
+        }
+        else
+        {
+            return Result.success(user);
+        }
     }
 }
