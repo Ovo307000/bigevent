@@ -45,8 +45,8 @@ public class UserController
 
         return switch (this.userService.register(new User(username, password)))
         {
-            case SUCCESS -> Result.success(RegisterStatus.SUCCESS.getMassage());
-            case USER_ALREADY_EXISTS -> Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage());
+            case RegisterStatus.SUCCESS -> Result.success(RegisterStatus.SUCCESS.getMassage());
+            case RegisterStatus.USER_ALREADY_EXISTS -> Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage());
 
             default -> Result.fail(RegisterStatus.FAILED.getMassage());
         };
@@ -64,10 +64,10 @@ public class UserController
         return switch (this.userService.login(new User(username, password)))
         {
             // TODO 2024年8月6日 00点50分 应该返回一个JWT Token
-            case SUCCESS -> Result.success(LoginStatus.SUCCESS.getMassage());
+            case LoginStatus.SUCCESS -> Result.success(LoginStatus.SUCCESS.getMassage());
+            case LoginStatus.PASSWORD_NOT_MATCH -> Result.fail(LoginStatus.PASSWORD_NOT_MATCH.getMassage());
+            case LoginStatus.USER_NOT_EXISTS -> Result.fail(LoginStatus.USER_NOT_EXISTS.getMassage());
 
-            case PASSWORD_NOT_MATCH -> Result.fail(LoginStatus.PASSWORD_NOT_MATCH.getMassage());
-            case USER_NOT_EXISTS -> Result.fail(LoginStatus.USER_NOT_EXISTS.getMassage());
             default -> Result.fail(LoginStatus.FAILED.getMassage());
         };
     }

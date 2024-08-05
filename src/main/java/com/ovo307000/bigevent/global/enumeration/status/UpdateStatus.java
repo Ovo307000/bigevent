@@ -10,16 +10,9 @@ public enum UpdateStatus implements Status
 
     EMAIL_INVALID(1030, "Email is invalid"),
 
-
-
-
-
-
-
     SUCCESS(200, "Status update successfully"),
 
-    FAILED(400, "Status update failed"),
-
+    FAILED(400, "Status update failed");
 
     private final String  message;
     private final Integer code;
