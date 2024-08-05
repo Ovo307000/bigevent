@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/user")
 @RestController("userController")
@@ -91,16 +91,9 @@ public class UserController
     {
         log.info("Finding user by nickname: {}", nickname);
 
-        List<User> users = this.userService.findUserByNickname(nickname);
-
-        if (users.isEmpty())
-        {
-            return Result.fail("User not exists");
-        }
-        else
-        {
-            return Result.success(users);
-        }
+        return Optional.ofNullable(this.userService.findUserByNickname(nickname))
+                       .map(Result::success)
+                       .orElse(Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage(), null));
     }
 
     @GetMapping("/findUserByUsernameLikeIgnoreCase")
@@ -108,16 +101,9 @@ public class UserController
     {
         log.info("Finding user by username like: {}", username);
 
-        List<User> users = this.userService.findUserByUsernameLikeIgnoreCase(username);
-
-        if (users.isEmpty())
-        {
-            return Result.fail("User not exists");
-        }
-        else
-        {
-            return Result.success(users);
-        }
+        return Optional.ofNullable(this.userService.findUserByUsernameLikeIgnoreCase(username))
+                       .map(Result::success)
+                       .orElse(Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage(), null));
     }
 
     @GetMapping("/findUserByUsername")
@@ -125,15 +111,8 @@ public class UserController
     {
         log.info("Finding user by username: {}", username);
 
-        User user = this.userService.findUserByUsername(username);
-
-        if (user == null)
-        {
-            return Result.fail("User not exists");
-        }
-        else
-        {
-            return Result.success(user);
-        }
+        return Optional.ofNullable(this.userService.findUserByUsername(username))
+                       .map(Result::success)
+                       .orElse(Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage(), null));
     }
 }
