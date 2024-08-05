@@ -3,7 +3,6 @@ package com.ovo307000.bigevent.controller;
 import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
-import com.ovo307000.bigevent.global.excaption.UserAlreadyExistsException;
 import com.ovo307000.bigevent.global.result.Result;
 import com.ovo307000.bigevent.service.UserService;
 import jakarta.validation.constraints.NotNull;
@@ -39,7 +38,7 @@ public class UserController
      *
      * @return 注册结果
      *
-     * @throws NoSuchAlgorithmException   加密算法不存在
+     * @throws NoSuchAlgorithmException 加密算法不存在
      */
     @PostMapping("/register")
     public Result<?> register(@NotNull String username, @NotNull String password) throws NoSuchAlgorithmException
