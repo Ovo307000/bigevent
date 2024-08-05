@@ -64,7 +64,7 @@ public class UserController
         return switch (this.userService.login(new User(username, password)))
         {
             // TODO 2024年8月6日 00点50分 应该返回一个JWT Token
-            case LoginStatus.SUCCESS -> Result.success(LoginStatus.SUCCESS.getMassage());
+            case LoginStatus.SUCCESS -> Result.success(LoginStatus.SUCCESS.getMassage(), "JWT Token");
             case LoginStatus.PASSWORD_NOT_MATCH -> Result.fail(LoginStatus.PASSWORD_NOT_MATCH.getMassage());
             case LoginStatus.USER_NOT_EXISTS -> Result.fail(LoginStatus.USER_NOT_EXISTS.getMassage());
 
