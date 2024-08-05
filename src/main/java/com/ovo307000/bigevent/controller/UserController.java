@@ -108,12 +108,12 @@ public class UserController
         }
     }
 
-    @GetMapping("/findUserByUsernameLike")
-    public Result<?> findUserByUsernameLike(String username)
+    @GetMapping("/findUserByUsernameLikeIgnoreCase")
+    public Result<?> findUserByUsernameLikeIgnoreCase(String username)
     {
         log.info("Finding user by username like: {}", username);
 
-        List<User> users = this.userService.findUserByUsernameLike(username);
+        List<User> users = this.userService.findUserByUsernameLikeIgnoreCase(username);
 
         if (users.isEmpty())
         {

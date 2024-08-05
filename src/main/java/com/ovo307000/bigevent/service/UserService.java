@@ -123,7 +123,7 @@ public class UserService
         log.info("Updated {} users", updatedCount);
     }
 
-    public List<User> findUserByUsernameLike(String username)
+    public List<User> findUserByUsernameLikeIgnoreCase(String username)
     {
         return this.userRepository.findUsersByNicknameLikeIgnoreCase(username);
     }
