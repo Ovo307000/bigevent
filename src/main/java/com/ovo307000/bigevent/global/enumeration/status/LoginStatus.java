@@ -1,6 +1,6 @@
 package com.ovo307000.bigevent.global.enumeration.status;
 
-public enum LoginStatus
+public enum LoginStatus implements Status
 {
     // 用户不存在
     USER_NOT_EXISTS("User not exists", 1010),
@@ -18,10 +18,10 @@ public enum LoginStatus
     ACCOUNT_LOCKED("Account is locked", 1050),
 
     // 成功
-    SUCCESS("Success", 2000),
+    SUCCESS("User login success", 200),
 
-    // 其他
-    OTHER("Other", 5000);
+    // 失败
+    FAILED("User login failure", 400);
 
     private final String  message;
     private final Integer code;
@@ -32,13 +32,15 @@ public enum LoginStatus
         this.code    = code;
     }
 
-    public String getMessage()
-    {
-        return this.message;
-    }
-
+    @Override
     public Integer getCode()
     {
         return this.code;
+    }
+
+    @Override
+    public String getMassage()
+    {
+        return this.message;
     }
 }

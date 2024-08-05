@@ -2,6 +2,7 @@ package com.ovo307000.bigevent.controller;
 
 import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
+import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.global.excaption.UserAlreadyExistsException;
 import com.ovo307000.bigevent.global.result.Result;
 import com.ovo307000.bigevent.service.UserService;
@@ -38,14 +39,17 @@ public class UserController
      * @throws UserAlreadyExistsException 用户已存在
      */
     @PostMapping("/register")
-    public Result<?> register(String username, String password)
-            throws NoSuchAlgorithmException, UserAlreadyExistsException
+    public Result<?> register(String username, String password) throws NoSuchAlgorithmException
     {
         log.info("Registering user: {}", username);
 
-        this.userService.register(new User(username, password));
+        return switch (this.userService.register(new User(username, password)))
+        {
+            case SUCCESS -> Result.success(RegisterStatus.SUCCESS.getMassage());
+            case USER_ALREADY_EXISTS -> Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage());
 
-        return Result.success();
+            default -> Result.fail(RegisterStatus.FAILED.getMassage());
+        };
     }
 
 
@@ -59,10 +63,12 @@ public class UserController
 
         return switch (this.userService.login(new User(username, password)))
         {
-            case SUCCESS -> Result.success(LoginStatus.SUCCESS.getMessage());
-            case PASSWORD_NOT_MATCH -> Result.fail(LoginStatus.PASSWORD_NOT_MATCH.getMessage());
-            case USER_NOT_EXISTS -> Result.fail(LoginStatus.USER_NOT_EXISTS.getMessage());
-            default -> Result.fail(LoginStatus.OTHER.getMessage());
+            // TODO 2024年8月6日 00点50分 应该返回一个JWT Token
+            case SUCCESS -> Result.success(LoginStatus.SUCCESS.getMassage());
+
+            case PASSWORD_NOT_MATCH -> Result.fail(LoginStatus.PASSWORD_NOT_MATCH.getMassage());
+            case USER_NOT_EXISTS -> Result.fail(LoginStatus.USER_NOT_EXISTS.getMassage());
+            default -> Result.fail(LoginStatus.FAILED.getMassage());
         };
     }
 

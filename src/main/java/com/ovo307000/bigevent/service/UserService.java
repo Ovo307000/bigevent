@@ -1,10 +1,9 @@
 package com.ovo307000.bigevent.service;
 
 import com.ovo307000.bigevent.entity.User;
-import com.ovo307000.bigevent.global.enumeration.constant.ResultConstant;
 import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
-import com.ovo307000.bigevent.global.excaption.UserAlreadyExistsException;
-import com.ovo307000.bigevent.global.excaption.UserNotExistsException;
+import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
+import com.ovo307000.bigevent.global.enumeration.status.UpdateStatus;
 import com.ovo307000.bigevent.global.surety.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.repository.UserRepository;
 import org.jetbrains.annotations.NotNull;
@@ -33,11 +32,11 @@ public class UserService
         this.userRepository = userRepository;
     }
 
-    public void register(@NotNull User user) throws NoSuchAlgorithmException, UserAlreadyExistsException
+    public RegisterStatus register(@NotNull User user) throws NoSuchAlgorithmException
     {
         if (this.isUserExists(user))
         {
-            throw new UserAlreadyExistsException(ResultConstant.USER_ALREADY_EXISTS.getMessage());
+            return RegisterStatus.USER_ALREADY_EXISTS;
         }
         else
         {
@@ -49,6 +48,8 @@ public class UserService
             newUser.setPassword(SHA256Encrypted.encrypt(user.getPassword()));
 
             this.userRepository.save(newUser);
+
+            return RegisterStatus.SUCCESS;
         }
     }
 
@@ -105,11 +106,11 @@ public class UserService
         return this.userRepository.findUsersByUsername(username);
     }
 
-    public void updateUser(User user)
+    public UpdateStatus updateUser(User user)
     {
         if (! this.isUserExists(user))
         {
-            throw new UserNotExistsException(ResultConstant.USER_NOT_EXISTS.getMessage());
+            return UpdateStatus.USER_NOT_EXISTS;
         }
 
         user.setUpdateTime(LocalDateTime.now());
@@ -123,6 +124,8 @@ public class UserService
                                                                     LocalDateTime.now());
 
         log.info("Updated {} users", updatedCount);
+
+        return updatedCount == 1 ? UpdateStatus.SUCCESS : UpdateStatus.FAILED;
     }
 
     public List<User> findUserByUsernameLikeIgnoreCase(String username)
