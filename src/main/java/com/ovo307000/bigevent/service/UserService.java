@@ -122,4 +122,9 @@ public class UserService
 
         log.info("Updated {} users", updatedCount);
     }
+
+    public List<User> findUserByUsernameLike(String username)
+    {
+        return this.userRepository.findUsersByNicknameLikeIgnoreCase(username);
+    }
 }

@@ -108,6 +108,23 @@ public class UserController
         }
     }
 
+    @GetMapping("/findUserByUsernameLike")
+    public Result<?> findUserByUsernameLike(String username)
+    {
+        log.info("Finding user by username like: {}", username);
+
+        List<User> users = this.userService.findUserByUsernameLike(username);
+
+        if (users.isEmpty())
+        {
+            return Result.fail("User not exists");
+        }
+        else
+        {
+            return Result.success(users);
+        }
+    }
+
     @GetMapping("/findUserByUsername")
     public Result<?> findUserByUsername(String username)
     {

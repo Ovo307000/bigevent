@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, Integer>
 {
     List<User> findUsersByNickname(@Param("nickname") String nickname);
 
+    List<User> findUsersByNicknameLikeIgnoreCase(@Param("nickname") String nickname);
+
     User findUsersByUsername(@Param("username") String username);
 
     @Modifying
@@ -37,6 +39,7 @@ public interface UserRepository extends JpaRepository<User, Integer>
                              @Param("newEmail") String newEmail,
                              @Param("newPicture") String newPicture,
                              @Param("updateTime") LocalDateTime updateTime);
+
 
 
 }
