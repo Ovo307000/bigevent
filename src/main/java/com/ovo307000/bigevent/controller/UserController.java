@@ -40,7 +40,6 @@ public class UserController
      * @return 注册结果
      *
      * @throws NoSuchAlgorithmException   加密算法不存在
-     * @throws UserAlreadyExistsException 用户已存在
      */
     @PostMapping("/register")
     public Result<?> register(@NotNull String username, @NotNull String password) throws NoSuchAlgorithmException
