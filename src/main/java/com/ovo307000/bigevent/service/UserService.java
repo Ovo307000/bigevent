@@ -1,12 +1,12 @@
 package com.ovo307000.bigevent.service;
 
-import com.ovo307000.bigevent.global.enumeration.constant.ResultConstant;
 import com.ovo307000.bigevent.entity.User;
-import com.ovo307000.bigevent.global.excaption.PasswordNotMatchException;
+import com.ovo307000.bigevent.global.enumeration.constant.ResultConstant;
+import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.global.excaption.UserAlreadyExistsException;
 import com.ovo307000.bigevent.global.excaption.UserNotExistsException;
-import com.ovo307000.bigevent.repository.UserRepository;
 import com.ovo307000.bigevent.global.surety.encryptor.SHA256Encrypted;
+import com.ovo307000.bigevent.repository.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,19 +58,21 @@ public class UserService
                        .isPresent();
     }
 
-    public void login(@NotNull User user)
+    public LoginStatus login(@NotNull User user)
     {
-        Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
-                .ifPresentOrElse((User userInDatabase) ->
-                                 {
-                                     if (! this.isPasswordCorrect(user))
-                                     {
-                                         throw new PasswordNotMatchException(ResultConstant.PASSWORD_INCORRECT.getMessage());
-                                     }
-                                 }, () ->
-                                 {
-                                     throw new UserNotExistsException(ResultConstant.USER_NOT_EXISTS.getMessage());
-                                 });
+        return Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
+                       .map((User userInDatabase) ->
+                            {
+                                if (this.isPasswordCorrect(user))
+                                {
+                                    return LoginStatus.SUCCESS;
+                                }
+                                else
+                                {
+                                    return LoginStatus.PASSWORD_INCORRECT;
+                                }
+                            })
+                       .orElse(LoginStatus.USER_NOT_EXISTS);
     }
 
     public boolean isPasswordCorrect(@NotNull User user)

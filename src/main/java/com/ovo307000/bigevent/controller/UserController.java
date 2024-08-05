@@ -1,9 +1,8 @@
 package com.ovo307000.bigevent.controller;
 
 import com.ovo307000.bigevent.entity.User;
-import com.ovo307000.bigevent.global.excaption.PasswordNotMatchException;
+import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.global.excaption.UserAlreadyExistsException;
-import com.ovo307000.bigevent.global.excaption.UserNotExistsException;
 import com.ovo307000.bigevent.global.result.Result;
 import com.ovo307000.bigevent.service.UserService;
 import org.slf4j.Logger;
@@ -58,27 +57,13 @@ public class UserController
     {
         log.info("Trying to login user: {}", username);
 
-        try
+        return switch (this.userService.login(new User(username, password)))
         {
-            log.info("Logging in user: {}", username);
-
-            this.userService.login(new User(username, password));
-        }
-        catch (PasswordNotMatchException passwordNotMatchException)
-        {
-            log.error("Login failed due to incorrect password: {}", passwordNotMatchException.getMessage());
-
-            return Result.fail(passwordNotMatchException.getMessage());
-        }
-        catch (UserNotExistsException userNotExistsException)
-        {
-            log.error("Login failed due to user not exists: {}", userNotExistsException.getMessage());
-
-            return Result.fail(userNotExistsException.getMessage());
-        }
-
-        log.info("Login successful: {}", username);
-        return Result.success();
+            case SUCCESS -> Result.success(LoginStatus.SUCCESS.getMessage());
+            case PASSWORD_NOT_MATCH -> Result.fail(LoginStatus.PASSWORD_NOT_MATCH.getMessage());
+            case USER_NOT_EXISTS -> Result.fail(LoginStatus.USER_NOT_EXISTS.getMessage());
+            default -> Result.fail(LoginStatus.OTHER.getMessage());
+        };
     }
 
     @PutMapping("/updateUser")

@@ -8,6 +8,7 @@ public enum LoginStatus
     // 密码相关
     PASSWORD_INCORRECT("Password is incorrect", 1020),
     PASSWORD_INVALID("Password is invalid", 1021),
+    PASSWORD_NOT_MATCH("Password does not match", 1022),
 
     // 安全问题相关
     SECURITY_QUESTION_INVALID("Security question is invalid", 1030),
@@ -20,7 +21,7 @@ public enum LoginStatus
     SUCCESS("Success", 2000),
 
     // 其他
-    OTHER("Other", 1999);
+    OTHER("Other", 1999),
 
     private final String  message;
     private final Integer code;
