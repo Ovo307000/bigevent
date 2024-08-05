@@ -6,15 +6,18 @@ import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.global.excaption.UserAlreadyExistsException;
 import com.ovo307000.bigevent.global.result.Result;
 import com.ovo307000.bigevent.service.UserService;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 
+@Validated
 @RequestMapping("/user")
 @RestController("userController")
 public class UserController
@@ -40,7 +43,7 @@ public class UserController
      * @throws UserAlreadyExistsException 用户已存在
      */
     @PostMapping("/register")
-    public Result<?> register(String username, String password) throws NoSuchAlgorithmException
+    public Result<?> register(@NotNull String username, @NotNull String password) throws NoSuchAlgorithmException
     {
         log.info("Registering user: {}", username);
 
@@ -58,7 +61,7 @@ public class UserController
      * 采用用户名和密码登录，因为在应用层出错后，会抛出异常，所以在这采用try-catch捕获异常
      * */
     @PostMapping("/login")
-    public Result<?> login(String username, String password)
+    public Result<?> login(@NotNull String username, @NotNull String password)
     {
         log.info("Trying to login user: {}", username);
 
@@ -74,7 +77,11 @@ public class UserController
     }
 
     @PutMapping("/updateUser")
-    public Result<?> updateUser(String username, String password, String nickname, String email, String userPic)
+    public Result<?> updateUser(@NotNull String username,
+                                String password,
+                                String nickname,
+                                String email,
+                                String userPic)
     {
         log.info("Updating user: {}", username);
 
@@ -88,33 +95,34 @@ public class UserController
     }
 
     @GetMapping("/findUserByNickname")
-    public Result<?> findUserByNickname(String nickname)
+    public Result<?> findUserByNickname(@NotNull String nickname)
     {
         log.info("Finding user by nickname: {}", nickname);
 
         return Optional.ofNullable(this.userService.findUserByNickname(nickname))
                        .filter((List<User> users) -> ! users.isEmpty())
                        .map(Result::success)
-                       .orElse(Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage(), null));
+                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMassage(), null));
     }
 
     @GetMapping("/findUserByUsernameLikeIgnoreCase")
-    public Result<?> findUserByUsernameLikeIgnoreCase(String username)
+    public Result<?> findUserByUsernameLikeIgnoreCase(@NotNull String username)
     {
         log.info("Finding user by username like: {}", username);
 
         return Optional.ofNullable(this.userService.findUserByUsernameLikeIgnoreCase(username))
+                       .filter((List<User> users) -> ! users.isEmpty())
                        .map(Result::success)
-                       .orElse(Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage(), null));
+                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMassage(), null));
     }
 
     @GetMapping("/findUserByUsername")
-    public Result<?> findUserByUsername(String username)
+    public Result<?> findUserByUsername(@NotNull String username)
     {
         log.info("Finding user by username: {}", username);
 
         return Optional.ofNullable(this.userService.findUserByUsername(username))
                        .map(Result::success)
-                       .orElse(Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage(), null));
+                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMassage(), null));
     }
 }

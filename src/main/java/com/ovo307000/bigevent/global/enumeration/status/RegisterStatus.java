@@ -3,6 +3,7 @@ package com.ovo307000.bigevent.global.enumeration.status;
 public enum RegisterStatus implements Status
 {
     USER_ALREADY_EXISTS("User already exists", 1000),
+    USER_NOT_EXISTS("User does not exist", 1010),
 
     USERNAME_INVALID("Username is invalid", 1020),
 

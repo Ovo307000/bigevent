@@ -20,6 +20,8 @@ public interface UserRepository extends JpaRepository<User, Integer>
 
     User findUsersByUsername(@Param("username") String username);
 
+    List<User> findUsersByUsernameLikeIgnoreCase(@Param("username") String username);
+
     @Modifying
     @Transactional
     @Query("""

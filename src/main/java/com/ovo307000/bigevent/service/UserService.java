@@ -131,6 +131,6 @@ public class UserService
 
     public List<User> findUserByUsernameLikeIgnoreCase(String username)
     {
-        return this.userRepository.findUsersByNicknameLikeIgnoreCase(username);
+        return this.userRepository.findUsersByUsernameLikeIgnoreCase(username);
     }
 }
