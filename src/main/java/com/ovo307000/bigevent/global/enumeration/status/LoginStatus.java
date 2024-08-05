@@ -21,7 +21,7 @@ public enum LoginStatus
     SUCCESS("Success", 2000),
 
     // 其他
-    OTHER("Other", 1999),
+    OTHER("Other", 5000);
 
     private final String  message;
     private final Integer code;
