@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/user")
@@ -92,6 +93,7 @@ public class UserController
         log.info("Finding user by nickname: {}", nickname);
 
         return Optional.ofNullable(this.userService.findUserByNickname(nickname))
+                       .filter((List<User> users) -> ! users.isEmpty())
                        .map(Result::success)
                        .orElse(Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage(), null));
     }
