@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.surety.encryptor;
+package com.ovo307000.bigevent.global.surety.encryptor;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

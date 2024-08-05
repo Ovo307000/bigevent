@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.excaption;
+package com.ovo307000.bigevent.global.excaption;
 
 public class UserAlreadyExistsException extends Exception
 {

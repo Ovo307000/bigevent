@@ -1,6 +1,6 @@
 package com.ovo307000.bigevent.global.handler;
 
-import com.ovo307000.bigevent.result.Result;
+import com.ovo307000.bigevent.global.result.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;

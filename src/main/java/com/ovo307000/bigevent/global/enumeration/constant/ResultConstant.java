@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.constant;
+package com.ovo307000.bigevent.global.enumeration.constant;
 
 public enum ResultConstant
 {

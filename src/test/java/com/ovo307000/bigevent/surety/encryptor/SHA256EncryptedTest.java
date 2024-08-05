@@ -1,5 +1,6 @@
 package com.ovo307000.bigevent.surety.encryptor;
 
+import com.ovo307000.bigevent.global.surety.encryptor.SHA256Encrypted;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,10 +1,10 @@
 package com.ovo307000.bigevent.controller;
 
 import com.ovo307000.bigevent.entity.User;
-import com.ovo307000.bigevent.excaption.PasswordNotMatchException;
-import com.ovo307000.bigevent.excaption.UserAlreadyExistsException;
-import com.ovo307000.bigevent.excaption.UserNotExistsException;
-import com.ovo307000.bigevent.result.Result;
+import com.ovo307000.bigevent.global.excaption.PasswordNotMatchException;
+import com.ovo307000.bigevent.global.excaption.UserAlreadyExistsException;
+import com.ovo307000.bigevent.global.excaption.UserNotExistsException;
+import com.ovo307000.bigevent.global.result.Result;
 import com.ovo307000.bigevent.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
