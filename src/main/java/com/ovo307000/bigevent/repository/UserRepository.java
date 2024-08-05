@@ -41,6 +41,5 @@ public interface UserRepository extends JpaRepository<User, Integer>
                              @Param("updateTime") LocalDateTime updateTime);
 
 
-
 }
 

@@ -22,7 +22,7 @@ public enum RegisterStatus implements Status
 
     FAILED("User register failure", 400);
 
-    private final String massage;
+    private final String  massage;
     private final Integer code;
 
     RegisterStatus(String massage, Integer code)
@@ -42,4 +42,4 @@ public enum RegisterStatus implements Status
     {
         return this.massage;
     }
-    }
+}
