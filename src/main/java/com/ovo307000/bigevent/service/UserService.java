@@ -3,6 +3,7 @@ package com.ovo307000.bigevent.service;
 import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
+import com.ovo307000.bigevent.global.enumeration.status.Status;
 import com.ovo307000.bigevent.global.enumeration.status.UpdateStatus;
 import com.ovo307000.bigevent.global.surety.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.repository.UserRepository;
@@ -32,7 +33,7 @@ public class UserService
         this.userRepository = userRepository;
     }
 
-    public RegisterStatus register(@NotNull User user) throws NoSuchAlgorithmException
+    public Status register(@NotNull User user) throws NoSuchAlgorithmException
     {
         if (this.isUserExists(user))
         {
@@ -59,7 +60,7 @@ public class UserService
                        .isPresent();
     }
 
-    public LoginStatus login(@NotNull User user)
+    public Status login(@NotNull User user)
     {
         return Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
                        .map((User userInDatabase) ->
@@ -106,7 +107,7 @@ public class UserService
         return this.userRepository.findUsersByUsername(username);
     }
 
-    public UpdateStatus updateUser(User user)
+    public Status updateUser(User user)
     {
         if (! this.isUserExists(user))
         {

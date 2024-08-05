@@ -77,9 +77,13 @@ public class UserController
     {
         log.info("Updating user: {}", username);
 
-        this.userService.updateUser(new User(username, password, nickname, email, userPic));
+        return switch (this.userService.updateUser(new User(username, password, nickname, email, userPic)))
+        {
+            case RegisterStatus.SUCCESS -> Result.success("User updated successfully");
+            case RegisterStatus.USER_ALREADY_EXISTS -> Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage());
 
-        return Result.success();
+            default -> Result.fail(RegisterStatus.FAILED.getMassage());
+        };
     }
 
     @GetMapping("/findUserByNickname")
