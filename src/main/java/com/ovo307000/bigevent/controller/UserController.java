@@ -116,6 +116,17 @@ public class UserController
                        .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMassage(), null));
     }
 
+    @GetMapping("/findUserByNicknameLikeIgnoreCase")
+    public Result<?> findUserByNicknameLikeIgnoreCase(@NotNull String nickname)
+    {
+        log.info("Finding user by nickname like: {}", nickname);
+
+        return Optional.ofNullable(this.userService.findUserByNicknameLikeIgnoreCase(nickname))
+                       .filter((List<User> users) -> ! users.isEmpty())
+                       .map(Result::success)
+                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMassage(), null));
+    }
+
     @GetMapping("/findUserByUsername")
     public Result<?> findUserByUsername(@NotNull String username)
     {

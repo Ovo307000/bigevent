@@ -133,4 +133,9 @@ public class UserService
     {
         return this.userRepository.findUsersByUsernameLikeIgnoreCase(username);
     }
+
+    public List<User> findUserByNicknameLikeIgnoreCase(String nickname)
+    {
+        return this.userRepository.findUsersByNicknameLikeIgnoreCase(nickname);
+    }
 }
