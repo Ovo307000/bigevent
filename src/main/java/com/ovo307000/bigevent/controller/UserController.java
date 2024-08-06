@@ -54,10 +54,6 @@ public class UserController
         };
     }
 
-
-    /*
-     * 采用用户名和密码登录，因为在应用层出错后，会抛出异常，所以在这采用try-catch捕获异常
-     * */
     @PostMapping("/login")
     public Result<?> login(@NotNull String username, @NotNull String password)
     {
