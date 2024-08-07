@@ -46,3 +46,7 @@ register:
 
   email-formats                  : [ gmail.com, yahoo.com, outlook.com, hotmail.com ]
   picture-formats                : [ jpg, jpeg, png, gif, bmp, webp ]
+
+jwt     :
+  expiration-of-minutes: 1440
+  secret               : "ovo307000"
