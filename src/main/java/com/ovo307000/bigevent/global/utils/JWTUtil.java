@@ -3,8 +3,6 @@ package com.ovo307000.bigevent.global.utils;
 import com.ovo307000.bigevent.global.properties.JWTProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -17,9 +15,8 @@ import java.util.*;
 @Component("jwtUtil")
 public class JWTUtil
 {
-    private static final Logger        log = LoggerFactory.getLogger(JWTUtil.class);
-    private final        JWTProperties jwtProperties;
-    private final        SecretKey     key;
+    private final JWTProperties jwtProperties;
+    private final SecretKey     key;
 
     public JWTUtil(@Qualifier("jwtProperties") JWTProperties jwtProperties)
     {
