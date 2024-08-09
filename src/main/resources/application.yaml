@@ -49,4 +49,5 @@ register:
 
 jwt     :
   expiration-of-minutes: 1440
-  secret               : "ovo307000"
+  secret  : "ovo307000"
+  key-type: "HS256"
