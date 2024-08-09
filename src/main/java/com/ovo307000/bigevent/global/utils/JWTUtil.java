@@ -10,7 +10,10 @@ import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 @Component("jwtUtil")
 public class JWTUtil
@@ -44,13 +47,27 @@ public class JWTUtil
     }
 
     // 生成JWT Token
-    public String generateToken()
+    public String generateToken(String subject)
     {
-        Map<String, Object> claims = new HashMap<>();
-
         LocalDateTime expirationDateTime = LocalDateTime.now()
                                                         .plusMinutes(this.jwtProperties.getExpirationOfMinutes());
 
+        return Jwts.builder()
+                   .subject(subject)
+                   .signWith(this.key)
+                   .notBefore(Date.from(Instant.now()))
+                   .issuedAt(Date.from(Instant.now()))
+                   .expiration(Date.from(expirationDateTime.atZone(ZoneId.systemDefault())
+                                                           .toInstant()))
+                   .id(UUID.randomUUID()
+                           .toString())
+                   .compact();
+    }
+
+    public String generateToken(Map<String, Object> claims)
+    {
+        LocalDateTime expirationDateTime = LocalDateTime.now()
+                                                        .plusMinutes(this.jwtProperties.getExpirationOfMinutes());
         return Jwts.builder()
                    .claims(claims)
                    .signWith(this.key)
