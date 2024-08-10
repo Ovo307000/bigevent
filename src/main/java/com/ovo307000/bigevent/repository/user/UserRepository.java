@@ -28,9 +28,11 @@ public interface UserRepository extends JpaRepository<User, Integer>
     @Query("""
            update User as user
            set user.nickname   = :#{#user.nickname},
-               user.password   = :#{#user.password}
-           where user.username = :#{#username}
+               user.password   = :#{#user.password},
+               user.email      = :#{#user.email},
+               user.updateTime = :#{#user.updateTime}
+           where user.id = :#{#id}
            """)
-    int updateUserByUsername(@Param("username") String username, @Param("user") User user);
+    int updateUserById(@Param("id") Long id, @Param("user") User user);
 }
 

@@ -14,7 +14,7 @@ public class User
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, nullable = false, length = 20)
     private String username;
@@ -125,12 +125,12 @@ public class User
                Objects.equals(this.articles, user.articles);
     }
 
-    public Integer getId()
+    public Long getId()
     {
         return this.id;
     }
 
-    public void setId(Integer id)
+    public void setId(Long id)
     {
         this.id = id;
     }

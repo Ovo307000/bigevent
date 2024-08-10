@@ -3,7 +3,6 @@ package com.ovo307000.bigevent.service.user;
 import com.ovo307000.bigevent.core.constants.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.core.constants.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.core.constants.enumeration.status.Status;
-import com.ovo307000.bigevent.core.constants.enumeration.status.UpdateStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
 import com.ovo307000.bigevent.core.utils.ThreadLocalUtil;
@@ -162,6 +161,6 @@ public class UserService
     {
         user.setUpdateTime(LocalDateTime.now());
 
-        return this.userRepository.updateUserByUsername(user.getUsername(), user) > 0;
+        return this.userRepository.updateUserById(user.getId(), user) > 0;
     }
 }
