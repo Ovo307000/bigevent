@@ -63,14 +63,13 @@ public class UserController
     {
         log.info("Trying to login user: {}", username);
 
+        String token = this.jwtUtil.generateToken(Map.of("username", username, "password", password));
+
+        log.debug("Token generated: {}", token);
+
         return switch (this.userService.login(new User(username, password)))
         {
-            // TODO 2024年8月6日 00点50分 应该返回一个JWT Token
-            case LoginStatus.SUCCESS -> Result.success(LoginStatus.SUCCESS.getMessage(),
-                                                       this.jwtUtil.generateToken(Map.of("username",
-                                                                                         username,
-                                                                                         "password",
-                                                                                         password)));
+            case LoginStatus.SUCCESS -> Result.success(LoginStatus.SUCCESS.getMessage(), token);
             case LoginStatus.PASSWORD_NOT_MATCH -> Result.fail(LoginStatus.PASSWORD_NOT_MATCH.getMessage());
             case LoginStatus.USER_NOT_EXISTS -> Result.fail(LoginStatus.USER_NOT_EXISTS.getMessage());
 
