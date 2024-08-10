@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.global.surety.checker.input;
+package com.ovo307000.bigevent.global.surety.checker;
 
 import com.ovo307000.bigevent.global.excaption.EmailFormatException;
 import com.ovo307000.bigevent.global.excaption.NicknameInvalidException;
