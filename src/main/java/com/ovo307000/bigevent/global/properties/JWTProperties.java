@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration("jwtProperties")
-@ConfigurationProperties(prefix = "jwt")
+@ConfigurationProperties(prefix = "bigevent.jwt")
 public class JWTProperties
 {
     private String secret;

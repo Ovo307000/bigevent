@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration("interceptorProperties")
-@ConfigurationProperties(prefix = "interceptor")
+@ConfigurationProperties(prefix = "bigevent.interceptor")
 public class InterceptorProperties
 {
     private boolean enable;

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration("registerProperties")
-@ConfigurationProperties(prefix = "register")
+@ConfigurationProperties(prefix = "bigevent.user.register")
 public class RegisterProperties
 {
     private Boolean enablePasswordCheck;

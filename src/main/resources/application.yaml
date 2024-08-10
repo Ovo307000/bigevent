@@ -1,4 +1,4 @@
-spring     :
+spring  :
   application:
     name: big-event
 
@@ -18,40 +18,43 @@ spring     :
 
     open-in-view: true
 
-logging    :
+logging :
   level:
     com: debug
-register   :
-  max-username-length            : 100
-  min-username-length            : 1
 
-  max-nickname-length            : 100
-  min-nickname-length            : 1
+bigevent:
+  jwt        :
+    secret                   : "ovo307000"
+    algorithm-name-upper-case: "HS256"
+    expiration-of-seconds    : 604800
 
-  max-password-length            : 100
-  min-password-length            : 1
-  password-need-number           : false
-  password-need-uppercase        : false
-  password-regex                 : "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$"
+  interceptor:
+    enable               : true
+    exclude-path-patterns: [ /user/login, /user/register ]
 
-  password-need-special-character: false
-  max-picture-size-of-bytes      : 10240000
-  min-picture-size-of-bytes      : 256
+  user       :
+    register:
+      max-username-length            : 100
+      min-username-length            : 1
 
-  enable-username-check          : true
-  enable-nickname-check          : true
-  enable-password-check          : true
-  enable-email-check             : true
-  enable-picture-check           : true
+      max-nickname-length            : 100
+      min-nickname-length            : 1
 
-  email-formats                  : [ gmail.com, yahoo.com, outlook.com, hotmail.com ]
-  picture-formats                : [ jpg, jpeg, png, gif, bmp, webp ]
+      max-password-length            : 100
+      min-password-length            : 1
+      password-need-number           : false
+      password-need-uppercase        : false
+      password-regex                 : "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$"
 
-jwt        :
-  secret                   : "ovo307000"
-  algorithm-name-upper-case: "HS256"
-  expiration-of-seconds    : 604800
+      password-need-special-character: false
+      max-picture-size-of-bytes      : 10240000
+      min-picture-size-of-bytes      : 256
 
-interceptor:
-  enable               : true
-  exclude-path-patterns: [ /user/login, /user/register ]
+      enable-username-check          : true
+      enable-nickname-check          : true
+      enable-password-check          : true
+      enable-email-check             : true
+      enable-picture-check           : true
+
+      email-formats                  : [ gmail.com, yahoo.com, outlook.com, hotmail.com ]
+      picture-formats                : [ jpg, jpeg, png, gif, bmp, webp ]
