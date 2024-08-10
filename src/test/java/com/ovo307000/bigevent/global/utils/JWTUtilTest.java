@@ -34,7 +34,7 @@ class JWTUtilTest
 
         Optional.ofNullable(this.jwtUtil.generateToken(claims))
                 .map(this.jwtUtil::verifyAndParseToken)
-                .ifPresent((Claims claims1) -> log.info(claims1.toString()));
+                .ifPresent((Claims extracts) -> log.info(extracts.toString()));
     }
 
     @Test

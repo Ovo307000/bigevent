@@ -23,10 +23,10 @@ public class JWTUtil
     {
         this.jwtProperties = jwtProperties;
 
-        Objects.requireNonNull(this.jwtProperties.getSecret(), "The secret property is required.");
-
-        this.key = this.getSignatureAlgorithm(this.jwtProperties.getAlgorithmNameUpperCase()
-                                                                .toUpperCase());
+        this.key = this.getSignatureAlgorithm(Objects.requireNonNull(this.jwtProperties.getAlgorithmNameUpperCase(),
+                                                                     "Algorithm name is null")
+                                                     .trim()
+                                                     .toUpperCase());
     }
 
     private SecretKey getSignatureAlgorithm(String keyAlgorithmUpperCase)
