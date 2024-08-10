@@ -1,7 +1,7 @@
 package com.ovo307000.bigevent.controller;
 
 import com.ovo307000.bigevent.entity.Article;
-import com.ovo307000.bigevent.global.enumeration.status.ArticleAStatus;
+import com.ovo307000.bigevent.core.constants.enumeration.status.ArticleAStatus;
 import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.ArticleService;
 import org.springframework.web.bind.annotation.GetMapping;

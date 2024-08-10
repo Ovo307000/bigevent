@@ -1,8 +1,8 @@
 package com.ovo307000.bigevent.config.interceptor;
 
 import com.ovo307000.bigevent.config.properties.InterceptorProperties;
-import com.ovo307000.bigevent.global.utils.JWTUtil;
-import com.ovo307000.bigevent.global.utils.ThreadLocalUtil;
+import com.ovo307000.bigevent.core.utils.JWTUtil;
+import com.ovo307000.bigevent.core.utils.ThreadLocalUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,14 +1,14 @@
 package com.ovo307000.bigevent.controller;
 
 import com.ovo307000.bigevent.entity.User;
-import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
-import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
-import com.ovo307000.bigevent.global.enumeration.status.UpdateStatus;
+import com.ovo307000.bigevent.core.constants.enumeration.status.LoginStatus;
+import com.ovo307000.bigevent.core.constants.enumeration.status.RegisterStatus;
+import com.ovo307000.bigevent.core.constants.enumeration.status.UpdateStatus;
 import com.ovo307000.bigevent.config.properties.InterceptorProperties;
 import com.ovo307000.bigevent.config.properties.JWTProperties;
 import com.ovo307000.bigevent.response.Result;
-import com.ovo307000.bigevent.global.security.encryptor.SHA256Encrypted;
-import com.ovo307000.bigevent.global.utils.JWTUtil;
+import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
+import com.ovo307000.bigevent.core.utils.JWTUtil;
 import com.ovo307000.bigevent.service.UserService;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;

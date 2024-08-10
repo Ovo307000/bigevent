@@ -2,7 +2,7 @@ package com.ovo307000.bigevent.config.configuation;
 
 import com.ovo307000.bigevent.config.interceptor.LoginInterceptor;
 import com.ovo307000.bigevent.config.properties.InterceptorProperties;
-import com.ovo307000.bigevent.global.security.checker.PropertiesCheck;
+import com.ovo307000.bigevent.core.security.checker.PropertiesCheck;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
