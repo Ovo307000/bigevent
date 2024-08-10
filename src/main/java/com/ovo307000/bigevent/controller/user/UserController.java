@@ -9,7 +9,7 @@ import com.ovo307000.bigevent.config.properties.JWTProperties;
 import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
-import com.ovo307000.bigevent.service.UserService;
+import com.ovo307000.bigevent.service.user.UserService;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class UserController
     private final JWTProperties         jwtProperties;
     private final InterceptorProperties interceptorProperties;
 
-    public UserController(@Qualifier("userService") UserService userService,
+    public UserController(@Qualifier(value = "userUserService") UserService userService,
                           JWTUtil jwtUtil,
                           JWTProperties jwtProperties,
                           InterceptorProperties interceptorProperties)

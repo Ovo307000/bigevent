@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.service;
+package com.ovo307000.bigevent.service.user;
 
 import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.core.constants.enumeration.status.LoginStatus;
@@ -8,7 +8,7 @@ import com.ovo307000.bigevent.core.constants.enumeration.status.UpdateStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
 import com.ovo307000.bigevent.core.utils.ThreadLocalUtil;
-import com.ovo307000.bigevent.repository.UserRepository;
+import com.ovo307000.bigevent.repository.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Service("userService")
+@Service("userUserService")
 public class UserService
 {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);

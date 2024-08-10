@@ -1,13 +1,13 @@
-package com.ovo307000.bigevent.service;
+package com.ovo307000.bigevent.service.user;
 
 import com.ovo307000.bigevent.entity.Article;
-import com.ovo307000.bigevent.repository.ArticleRepository;
+import com.ovo307000.bigevent.repository.user.ArticleRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service("articleService")
+@Service("userArticleService")
 public class ArticleService
 {
     private final ArticleRepository articleRepository;

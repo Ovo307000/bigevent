@@ -7,7 +7,7 @@ public class EmailFormatException extends IllegalArgumentException
         super(message);
     }
 
-    EmailFormatException()
+    public EmailFormatException()
     {
         super();
     }

@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.repository;
+package com.ovo307000.bigevent.repository.user;
 
 import com.ovo307000.bigevent.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository("userRepository")
+@Repository("userUserRepository")
 public interface UserRepository extends JpaRepository<User, Integer>
 {
     List<User> findUsersByNickname(@Param("nickname") String nickname);

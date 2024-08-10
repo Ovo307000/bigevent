@@ -3,7 +3,7 @@ package com.ovo307000.bigevent.controller.user;
 import com.ovo307000.bigevent.entity.Article;
 import com.ovo307000.bigevent.core.constants.enumeration.status.ArticleAStatus;
 import com.ovo307000.bigevent.response.Result;
-import com.ovo307000.bigevent.service.ArticleService;
+import com.ovo307000.bigevent.service.user.ArticleService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

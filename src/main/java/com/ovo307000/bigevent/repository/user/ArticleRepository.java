@@ -1,10 +1,10 @@
-package com.ovo307000.bigevent.repository;
+package com.ovo307000.bigevent.repository.user;
 
 import com.ovo307000.bigevent.entity.Article;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository("articleRepository")
+@Repository("userArticleRepository")
 public interface ArticleRepository extends JpaRepository<Article, Integer>
 {
 }
