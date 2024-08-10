@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Map;
@@ -13,9 +12,14 @@ import java.util.Optional;
 @SpringBootTest
 class JWTUtilTest
 {
-    private static final Logger  log = LoggerFactory.getLogger(JWTUtilTest.class);
-    @Autowired
-    private              JWTUtil jwtUtil;
+    private static final Logger log = LoggerFactory.getLogger(JWTUtilTest.class);
+
+    private final JWTUtil jwtUtil;
+
+    JWTUtilTest(JWTUtil jwtUtil)
+    {
+        this.jwtUtil = jwtUtil;
+    }
 
     @Test
     void generateTokenWithClaims()
