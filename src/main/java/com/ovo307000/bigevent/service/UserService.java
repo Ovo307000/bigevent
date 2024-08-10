@@ -6,7 +6,10 @@ import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.global.enumeration.status.Status;
 import com.ovo307000.bigevent.global.enumeration.status.UpdateStatus;
 import com.ovo307000.bigevent.global.surety.encryptor.SHA256Encrypted;
+import com.ovo307000.bigevent.global.utils.JWTUtil;
 import com.ovo307000.bigevent.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +29,13 @@ public class UserService
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+    private final JWTUtil        jwtUtil;
 
     @Autowired
-    public UserService(@Qualifier("userRepository") UserRepository userRepository)
+    public UserService(@Qualifier("userRepository") UserRepository userRepository, JWTUtil jwtUtil)
     {
         this.userRepository = userRepository;
+        this.jwtUtil        = jwtUtil;
     }
 
     public Status register(@NotNull User user) throws NoSuchAlgorithmException
@@ -137,5 +142,25 @@ public class UserService
     public List<User> findUserByNicknameLikeIgnoreCase(String nickname)
     {
         return this.userRepository.findUsersByNicknameLikeIgnoreCase(nickname);
+    }
+
+    public User queryCurrentUserInfo(String token)
+    {
+        Claims claims;
+
+        try
+        {
+            claims = this.jwtUtil.verifyAndParseToken(token);
+        }
+        catch (JwtException jwtException)
+        {
+            throw new RuntimeException("Token verification failed: " + jwtException.getMessage());
+        }
+
+        String username = claims.get("username", String.class);
+        String password = claims.get("password", String.class);
+
+        return this.userRepository.findUsersByUsernameAndPassword(username, password)
+                                  .getFirst();
     }
 }

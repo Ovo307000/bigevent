@@ -23,7 +23,7 @@ public class PropertiesCheck
     {
         log.debug("Checking path format...");
 
-        return path.startsWith("/") && path.endsWith("/");
+        return path.startsWith("/");
     }
 
     public boolean checkEmailFormat(List<String> emails)

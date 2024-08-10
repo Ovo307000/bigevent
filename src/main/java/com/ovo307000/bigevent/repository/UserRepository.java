@@ -43,5 +43,6 @@ public interface UserRepository extends JpaRepository<User, Integer>
                              @Param("updateTime") LocalDateTime updateTime);
 
 
+    List<User> findUsersByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
 }
 

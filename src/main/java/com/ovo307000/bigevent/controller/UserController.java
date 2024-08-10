@@ -4,6 +4,7 @@ import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.global.result.Result;
+import com.ovo307000.bigevent.global.surety.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.global.utils.JWTUtil;
 import com.ovo307000.bigevent.service.UserService;
 import jakarta.validation.constraints.NotNull;
@@ -59,11 +60,14 @@ public class UserController
     }
 
     @PostMapping("/login")
-    public Result<?> login(@NotNull String username, @NotNull String password)
+    public Result<?> login(@NotNull String username, @NotNull String password) throws NoSuchAlgorithmException
     {
         log.info("Trying to login user: {}", username);
 
-        String token = this.jwtUtil.generateToken(Map.of("username", username, "password", password));
+        String token = this.jwtUtil.generateToken(Map.of("username",
+                                                         username,
+                                                         "password",
+                                                         SHA256Encrypted.encrypt(password)));
 
         log.debug("Token generated: {}", token);
 
@@ -134,6 +138,16 @@ public class UserController
         log.info("Finding user by username: {}", username);
 
         return Optional.ofNullable(this.userService.findUserByUsername(username))
+                       .map(Result::success)
+                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
+    }
+
+    @GetMapping("/userInfo")
+    public Result<User> userInfo(@RequestHeader("Authorization") String token)
+    {
+        log.info("Getting user info by token: {}", token);
+
+        return Optional.ofNullable(this.userService.queryCurrentUserInfo(token))
                        .map(Result::success)
                        .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
     }
