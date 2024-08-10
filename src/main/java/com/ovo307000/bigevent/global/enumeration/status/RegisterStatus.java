@@ -39,7 +39,7 @@ public enum RegisterStatus implements Status
     }
 
     @Override
-    public String getMassage()
+    public String getMessage()
     {
         return this.massage;
     }

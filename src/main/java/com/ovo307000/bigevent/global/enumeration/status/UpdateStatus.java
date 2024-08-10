@@ -30,7 +30,7 @@ public enum UpdateStatus implements Status
     }
 
     @Override
-    public String getMassage()
+    public String getMessage()
     {
         return this.message;
     }

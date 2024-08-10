@@ -4,5 +4,5 @@ public interface Status
 {
     Integer getCode();
 
-    String getMassage();
+    String getMessage();
 }

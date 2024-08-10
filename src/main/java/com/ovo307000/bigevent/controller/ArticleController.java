@@ -28,6 +28,6 @@ public class ArticleController
         return Optional.ofNullable(this.articleService.list())
                        .filter((List<Article> articles) -> ! articles.isEmpty())
                        .map(Result::success)
-                       .orElse(Result.fail(ArticleAStatus.ARTICLE_NOT_FOUND.getMassage(), null));
+                       .orElse(Result.fail(ArticleAStatus.ARTICLE_NOT_FOUND.getMessage(), null));
     }
 }

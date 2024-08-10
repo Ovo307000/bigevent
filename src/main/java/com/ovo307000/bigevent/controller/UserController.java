@@ -47,10 +47,10 @@ public class UserController
 
         return switch (this.userService.register(new User(username, password)))
         {
-            case RegisterStatus.SUCCESS -> Result.success(RegisterStatus.SUCCESS.getMassage());
-            case RegisterStatus.USER_ALREADY_EXISTS -> Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage());
+            case RegisterStatus.SUCCESS -> Result.success(RegisterStatus.SUCCESS.getMessage());
+            case RegisterStatus.USER_ALREADY_EXISTS -> Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMessage());
 
-            default -> Result.fail(RegisterStatus.FAILED.getMassage());
+            default -> Result.fail(RegisterStatus.FAILED.getMessage());
         };
     }
 
@@ -62,11 +62,11 @@ public class UserController
         return switch (this.userService.login(new User(username, password)))
         {
             // TODO 2024年8月6日 00点50分 应该返回一个JWT Token
-            case LoginStatus.SUCCESS -> Result.success(LoginStatus.SUCCESS.getMassage(), "JWT Token");
-            case LoginStatus.PASSWORD_NOT_MATCH -> Result.fail(LoginStatus.PASSWORD_NOT_MATCH.getMassage());
-            case LoginStatus.USER_NOT_EXISTS -> Result.fail(LoginStatus.USER_NOT_EXISTS.getMassage());
+            case LoginStatus.SUCCESS -> Result.success(LoginStatus.SUCCESS.getMessage(), "JWT Token");
+            case LoginStatus.PASSWORD_NOT_MATCH -> Result.fail(LoginStatus.PASSWORD_NOT_MATCH.getMessage());
+            case LoginStatus.USER_NOT_EXISTS -> Result.fail(LoginStatus.USER_NOT_EXISTS.getMessage());
 
-            default -> Result.fail(LoginStatus.FAILED.getMassage());
+            default -> Result.fail(LoginStatus.FAILED.getMessage());
         };
     }
 
@@ -82,9 +82,9 @@ public class UserController
         return switch (this.userService.updateUser(new User(username, password, nickname, email, userPic)))
         {
             case RegisterStatus.SUCCESS -> Result.success("User updated successfully");
-            case RegisterStatus.USER_ALREADY_EXISTS -> Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMassage());
+            case RegisterStatus.USER_ALREADY_EXISTS -> Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMessage());
 
-            default -> Result.fail(RegisterStatus.FAILED.getMassage());
+            default -> Result.fail(RegisterStatus.FAILED.getMessage());
         };
     }
 
@@ -96,7 +96,7 @@ public class UserController
         return Optional.ofNullable(this.userService.findUserByNickname(nickname))
                        .filter((List<User> users) -> ! users.isEmpty())
                        .map(Result::success)
-                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMassage(), null));
+                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
     }
 
     @GetMapping("/findUserByUsernameLikeIgnoreCase")
@@ -107,7 +107,7 @@ public class UserController
         return Optional.ofNullable(this.userService.findUserByUsernameLikeIgnoreCase(username))
                        .filter((List<User> users) -> ! users.isEmpty())
                        .map(Result::success)
-                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMassage(), null));
+                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
     }
 
     @GetMapping("/findUserByNicknameLikeIgnoreCase")
@@ -118,7 +118,7 @@ public class UserController
         return Optional.ofNullable(this.userService.findUserByNicknameLikeIgnoreCase(nickname))
                        .filter((List<User> users) -> ! users.isEmpty())
                        .map(Result::success)
-                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMassage(), null));
+                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
     }
 
     @GetMapping("/findUserByUsername")
@@ -128,6 +128,6 @@ public class UserController
 
         return Optional.ofNullable(this.userService.findUserByUsername(username))
                        .map(Result::success)
-                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMassage(), null));
+                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
     }
 }
