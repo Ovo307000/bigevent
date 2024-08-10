@@ -76,32 +76,32 @@ public class RegisterProperties
         this.passwordRegex = passwordRegex;
     }
 
-    public Boolean getPasswordNeedNumber()
+    public Boolean getIsPasswordNeedNumber()
     {
         return this.IsPasswordNeedNumber;
     }
 
-    public void setPasswordNeedNumber(Boolean passwordNeedNumber)
+    public void setIsPasswordNeedNumber(Boolean passwordNeedNumber)
     {
         this.IsPasswordNeedNumber = passwordNeedNumber;
     }
 
-    public Boolean getPasswordNeedUppercase()
+    public Boolean getIsPasswordNeedUppercase()
     {
         return this.IsPasswordNeedUppercase;
     }
 
-    public void setPasswordNeedUppercase(Boolean passwordNeedUppercase)
+    public void setIsPasswordNeedUppercase(Boolean passwordNeedUppercase)
     {
         this.IsPasswordNeedUppercase = passwordNeedUppercase;
     }
 
-    public Boolean getPasswordNeedSpecialCharacter()
+    public Boolean getIsPasswordNeedSpecialCharacter()
     {
         return this.IsPasswordNeedSpecialCharacter;
     }
 
-    public void setPasswordNeedSpecialCharacter(Boolean passwordNeedSpecialCharacter)
+    public void setIsPasswordNeedSpecialCharacter(Boolean passwordNeedSpecialCharacter)
     {
         this.IsPasswordNeedSpecialCharacter = passwordNeedSpecialCharacter;
     }

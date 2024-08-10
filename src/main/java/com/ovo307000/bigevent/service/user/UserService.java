@@ -34,7 +34,7 @@ public class UserService
     private final JWTUtil                 jwtUtil;
 
     @Autowired
-    public UserService(@Qualifier("userRepository") UserRepository userRepository,
+    public UserService(@Qualifier("userUserRepository") UserRepository userRepository,
                        ThreadLocalUtil<Claims> threadLocalUtil,
                        JWTUtil jwtUtil)
     {

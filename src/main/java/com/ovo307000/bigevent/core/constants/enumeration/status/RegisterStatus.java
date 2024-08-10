@@ -23,12 +23,12 @@ public enum RegisterStatus implements Status
 
     FAILED("User register failure", 400);
 
-    private final String  massage;
+    private final String  message;
     private final Integer code;
 
     RegisterStatus(String massage, Integer code)
     {
-        this.massage = massage;
+        this.message = massage;
         this.code    = code;
     }
 
@@ -41,6 +41,6 @@ public enum RegisterStatus implements Status
     @Override
     public String getMessage()
     {
-        return this.massage;
+        return this.message;
     }
 }

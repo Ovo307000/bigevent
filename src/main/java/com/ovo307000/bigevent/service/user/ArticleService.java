@@ -12,7 +12,7 @@ public class ArticleService
 {
     private final ArticleRepository articleRepository;
 
-    public ArticleService(@Qualifier("articleRepository") ArticleRepository articleRepository)
+    public ArticleService(@Qualifier("userArticleRepository") ArticleRepository articleRepository)
     {
         this.articleRepository = articleRepository;
     }
