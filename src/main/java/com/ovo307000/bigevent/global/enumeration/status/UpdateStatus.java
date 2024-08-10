@@ -14,8 +14,8 @@ public enum UpdateStatus implements Status
 
     FAILED(400, "Status update failed");
 
-    private final String  message;
     private final Integer code;
+    private final String  message;
 
     UpdateStatus(Integer code, String message)
     {
@@ -26,12 +26,12 @@ public enum UpdateStatus implements Status
     @Override
     public Integer getCode()
     {
-        return 0;
+        return this.code;
     }
 
     @Override
     public String getMassage()
     {
-        return "";
+        return this.message;
     }
 }
