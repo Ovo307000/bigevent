@@ -161,6 +161,13 @@ public class UserService
     {
         user.setUpdateTime(LocalDateTime.now());
 
-        return this.userRepository.updateUserById(user.getId(), user) > 0;
+        if (this.isUserExists(user))
+        {
+            return this.userRepository.updateUserById(user.getId(), user) > 0;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
