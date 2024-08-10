@@ -2,6 +2,7 @@ package com.ovo307000.bigevent.global.interceptor;
 
 import com.ovo307000.bigevent.global.properties.InterceptorProperties;
 import com.ovo307000.bigevent.global.utils.JWTUtil;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,7 +41,10 @@ public class LoginInterceptor implements HandlerInterceptor
         // 如果 token 有效，则返回 200
         try
         {
-            this.jwtUtil.verifyAndParseToken(requestHeader);
+            final Claims claims = this.jwtUtil.verifyAndParseToken(requestHeader);
+
+            ThreadLocal.withInitial(() -> claims);
+
             response.setStatus(200);
 
             return true;
