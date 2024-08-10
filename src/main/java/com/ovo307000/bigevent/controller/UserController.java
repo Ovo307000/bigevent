@@ -3,6 +3,7 @@ package com.ovo307000.bigevent.controller;
 import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
+import com.ovo307000.bigevent.global.enumeration.status.UpdateStatus;
 import com.ovo307000.bigevent.global.result.Result;
 import com.ovo307000.bigevent.global.surety.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.global.utils.JWTUtil;
@@ -86,14 +87,14 @@ public class UserController
                                 String password,
                                 String nickname,
                                 String email,
-                                String userPic)
+                                String userPic) throws NoSuchAlgorithmException
     {
         log.info("Updating user: {}", username);
 
         return switch (this.userService.updateUser(new User(username, password, nickname, email, userPic)))
         {
-            case RegisterStatus.SUCCESS -> Result.success("User updated successfully");
-            case RegisterStatus.USER_ALREADY_EXISTS -> Result.fail(RegisterStatus.USER_ALREADY_EXISTS.getMessage());
+            case UpdateStatus.SUCCESS -> Result.success("User updated successfully");
+            case UpdateStatus.USER_NOT_EXISTS -> Result.fail(UpdateStatus.USER_NOT_EXISTS.getMessage());
 
             default -> Result.fail(RegisterStatus.FAILED.getMessage());
         };

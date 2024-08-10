@@ -112,7 +112,7 @@ public class UserService
         return this.userRepository.findUsersByUsername(username);
     }
 
-    public Status updateUser(User user)
+    public Status updateUser(User user) throws NoSuchAlgorithmException
     {
         if (! this.isUserExists(user))
         {
@@ -121,10 +121,12 @@ public class UserService
 
         user.setUpdateTime(LocalDateTime.now());
 
+        String encryptedPassword = SHA256Encrypted.encrypt(user.getPassword());
+
         int updatedCount = this.userRepository.updateUserByUsername(user.getUsername(),
                                                                     user.getUsername(),
                                                                     user.getNickname(),
-                                                                    user.getPassword(),
+                                                                    encryptedPassword,
                                                                     user.getEmail(),
                                                                     user.getUserPic(),
                                                                     LocalDateTime.now());
