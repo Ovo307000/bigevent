@@ -44,21 +44,6 @@ public class JWTUtil
         };
     }
 
-    // 生成JWT Token
-    public String generateToken(String subject)
-    {
-        return Jwts.builder()
-                   .subject(subject)
-                   .signWith(this.key)
-                   .notBefore(Date.from(Instant.now()))
-                   .issuedAt(Date.from(Instant.now()))
-                   .expiration(Date.from(Instant.now()
-                                                .plusSeconds(this.jwtProperties.getExpirationOfSeconds())))
-                   .id(UUID.randomUUID()
-                           .toString())
-                   .compact();
-    }
-
     // TODO:
     //  2024年8月10日 18点52分
     //      生成加密的JWT Token，待实现
@@ -68,7 +53,6 @@ public class JWTUtil
         return Jwts.builder()
                    .claims(claims)
                    .signWith(this.key)
-                   .notBefore(Date.from(Instant.now()))
                    .issuedAt(Date.from(Instant.now()))
                    .expiration(Date.from(Instant.now()
                                                 .plusSeconds(this.jwtProperties.getExpirationOfSeconds())))

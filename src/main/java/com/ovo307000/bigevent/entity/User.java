@@ -1,5 +1,6 @@
 package com.ovo307000.bigevent.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class User
     @Column(unique = true, nullable = false, length = 20)
     private String username;
 
+    @JsonIgnore
     @Column(length = 256)
     private String password;
 
