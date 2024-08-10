@@ -1,6 +1,5 @@
 package com.ovo307000.bigevent;
 
-import com.ovo307000.bigevent.global.surety.checker.PropertiesCheck;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

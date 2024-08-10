@@ -9,7 +9,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "bigevent.interceptor")
 public class InterceptorProperties
 {
-    private boolean enable;
+    private boolean      enable;
     private List<String> excludePathPatterns;
 
     public boolean isEnable()
