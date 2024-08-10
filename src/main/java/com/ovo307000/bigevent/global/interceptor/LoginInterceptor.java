@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Component("loginInterceptor")
@@ -28,6 +29,9 @@ public class LoginInterceptor implements HandlerInterceptor
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) throws JwtException
     {
+        ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
+
+
         // 如果不需要拦截，直接放行
         if (! this.interceptorProperties.isEnable())
         {
@@ -40,7 +44,7 @@ public class LoginInterceptor implements HandlerInterceptor
         // 如果 token 有效，则返回 200
         try
         {
-            this.jwtUtil.verifyAndParseToken(requestHeader);
+            threadLocal.set(this.jwtUtil.verifyAndParseToken(requestHeader));
             response.setStatus(200);
 
             return true;
