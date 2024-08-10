@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.global.result;
+package com.ovo307000.bigevent.response;
 
 import java.util.Objects;
 

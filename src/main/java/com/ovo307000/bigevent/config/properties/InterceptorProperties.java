@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.global.properties;
+package com.ovo307000.bigevent.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

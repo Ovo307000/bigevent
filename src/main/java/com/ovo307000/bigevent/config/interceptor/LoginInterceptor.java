@@ -1,6 +1,6 @@
-package com.ovo307000.bigevent.global.interceptor;
+package com.ovo307000.bigevent.config.interceptor;
 
-import com.ovo307000.bigevent.global.properties.InterceptorProperties;
+import com.ovo307000.bigevent.config.properties.InterceptorProperties;
 import com.ovo307000.bigevent.global.utils.JWTUtil;
 import com.ovo307000.bigevent.global.utils.ThreadLocalUtil;
 import io.jsonwebtoken.Claims;

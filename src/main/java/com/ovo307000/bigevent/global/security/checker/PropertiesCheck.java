@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.global.surety.checker;
+package com.ovo307000.bigevent.global.security.checker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

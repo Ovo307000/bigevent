@@ -5,7 +5,7 @@ import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.global.enumeration.status.Status;
 import com.ovo307000.bigevent.global.enumeration.status.UpdateStatus;
-import com.ovo307000.bigevent.global.surety.encryptor.SHA256Encrypted;
+import com.ovo307000.bigevent.global.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.global.utils.JWTUtil;
 import com.ovo307000.bigevent.global.utils.ThreadLocalUtil;
 import com.ovo307000.bigevent.repository.UserRepository;

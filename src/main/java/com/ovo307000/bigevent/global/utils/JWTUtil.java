@@ -1,6 +1,6 @@
 package com.ovo307000.bigevent.global.utils;
 
-import com.ovo307000.bigevent.global.properties.JWTProperties;
+import com.ovo307000.bigevent.config.properties.JWTProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Qualifier;
