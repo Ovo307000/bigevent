@@ -1,14 +1,13 @@
 package com.ovo307000.bigevent.controller.user;
 
-import com.ovo307000.bigevent.entity.User;
+import com.ovo307000.bigevent.config.properties.InterceptorProperties;
 import com.ovo307000.bigevent.core.constants.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.core.constants.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.core.constants.enumeration.status.UpdateStatus;
-import com.ovo307000.bigevent.config.properties.InterceptorProperties;
-import com.ovo307000.bigevent.config.properties.JWTProperties;
-import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
+import com.ovo307000.bigevent.entity.User;
+import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.user.UserService;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -31,17 +30,14 @@ public class UserController
 
     private final UserService           userService;
     private final JWTUtil               jwtUtil;
-    private final JWTProperties         jwtProperties;
     private final InterceptorProperties interceptorProperties;
 
     public UserController(@Qualifier(value = "userUserService") UserService userService,
                           JWTUtil jwtUtil,
-                          JWTProperties jwtProperties,
                           InterceptorProperties interceptorProperties)
     {
         this.userService           = userService;
         this.jwtUtil               = jwtUtil;
-        this.jwtProperties         = jwtProperties;
         this.interceptorProperties = interceptorProperties;
     }
 
