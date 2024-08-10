@@ -87,24 +87,6 @@ public class UserController
         };
     }
 
-    @PutMapping("/updateUser")
-    public Result<?> updateUser(@NotNull String username,
-                                String password,
-                                String nickname,
-                                String email,
-                                String userPic) throws NoSuchAlgorithmException
-    {
-        log.info("Updating user: {}", username);
-
-        return switch (this.userService.updateUser(new User(username, password, nickname, email, userPic)))
-        {
-            case UpdateStatus.SUCCESS -> Result.success("User updated successfully");
-            case UpdateStatus.USER_NOT_EXISTS -> Result.fail(UpdateStatus.USER_NOT_EXISTS.getMessage());
-
-            default -> Result.fail(RegisterStatus.FAILED.getMessage());
-        };
-    }
-
     @GetMapping("/findUserByNickname")
     public Result<?> findUserByNickname(@NotNull String nickname)
     {
@@ -165,6 +147,19 @@ public class UserController
             return Optional.ofNullable(this.userService.queryCurrentUserInfo(token))
                            .map(Result::success)
                            .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/update")
+    public Result<?> update(@RequestBody User user)
+    {
+        if (this.userService.update(user))
+        {
+            return Result.success(UpdateStatus.SUCCESS.getMessage());
+        }
+        else
+        {
+            return Result.fail(UpdateStatus.FAILED.getMessage());
         }
     }
 }

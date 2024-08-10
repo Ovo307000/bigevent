@@ -1,6 +1,5 @@
 package com.ovo307000.bigevent.service.user;
 
-import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.core.constants.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.core.constants.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.core.constants.enumeration.status.Status;
@@ -8,6 +7,7 @@ import com.ovo307000.bigevent.core.constants.enumeration.status.UpdateStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
 import com.ovo307000.bigevent.core.utils.ThreadLocalUtil;
+import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.repository.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -117,30 +117,6 @@ public class UserService
         return this.userRepository.findUsersByUsername(username);
     }
 
-    public Status updateUser(User user) throws NoSuchAlgorithmException
-    {
-        if (! this.isUserExists(user))
-        {
-            return UpdateStatus.USER_NOT_EXISTS;
-        }
-
-        user.setUpdateTime(LocalDateTime.now());
-
-        String encryptedPassword = SHA256Encrypted.encrypt(user.getPassword());
-
-        int updatedCount = this.userRepository.updateUserByUsername(user.getUsername(),
-                                                                    user.getUsername(),
-                                                                    user.getNickname(),
-                                                                    encryptedPassword,
-                                                                    user.getEmail(),
-                                                                    user.getUserPic(),
-                                                                    LocalDateTime.now());
-
-        log.info("Updated user: {}, count: {}", user, updatedCount);
-
-        return updatedCount == 1 ? UpdateStatus.SUCCESS : UpdateStatus.FAILED;
-    }
-
     public List<User> findUserByUsernameLikeIgnoreCase(String username)
     {
         return this.userRepository.findUsersByUsernameLikeIgnoreCase(username);
@@ -180,5 +156,12 @@ public class UserService
         {
             throw new JwtException("Token verification failed: " + jwtException.getMessage());
         }
+    }
+
+    public boolean update(User user)
+    {
+        user.setUpdateTime(LocalDateTime.now());
+
+        return this.userRepository.updateUserByUsername(user.getUsername(), user) > 0;
     }
 }
