@@ -52,7 +52,7 @@ public class LoginInterceptor implements HandlerInterceptor
         // 检查配置，如果拦截器未启用，则直接放行
         if (! this.interceptorProperties.isEnable())
         {
-            response.setStatus(200);
+            response.setStatus(HttpServletResponse.SC_OK);
             return true;
         }
 
@@ -67,7 +67,7 @@ public class LoginInterceptor implements HandlerInterceptor
             this.threadLocalUtil.set(claims);
 
             // 设置响应状态码为200，表示请求有效，放行
-            response.setStatus(200);
+            response.setStatus(HttpServletResponse.SC_OK);
 
             return true;
         }
@@ -75,7 +75,7 @@ public class LoginInterceptor implements HandlerInterceptor
         catch (JwtException jwtException)
         {
             // 设置响应状态码为401，表示请求无效（令牌无效），拦截
-            response.setStatus(401);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
             return false;
         }
