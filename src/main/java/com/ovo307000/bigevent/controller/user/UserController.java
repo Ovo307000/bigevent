@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.controller;
+package com.ovo307000.bigevent.controller.user;
 
 import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.core.constants.enumeration.status.LoginStatus;
@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @Validated
 @RequestMapping("/user")
-@RestController("userController")
+@RestController("userUserController")
 public class UserController
 {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);

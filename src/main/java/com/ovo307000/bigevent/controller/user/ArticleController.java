@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.controller;
+package com.ovo307000.bigevent.controller.user;
 
 import com.ovo307000.bigevent.entity.Article;
 import com.ovo307000.bigevent.core.constants.enumeration.status.ArticleAStatus;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/article")
-@RestController("articleController")
+@RestController("userArticleController")
 public class ArticleController
 {
     private final ArticleService articleService;
