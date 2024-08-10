@@ -70,7 +70,7 @@ public class UserService
         return Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
                        .map((User userInDatabase) ->
                             {
-                                if (this.isPasswordCorrect(user))
+                                if (this.isPasswordCorrect(user, userInDatabase))
                                 {
                                     return LoginStatus.SUCCESS;
                                 }
@@ -82,13 +82,12 @@ public class UserService
                        .orElse(LoginStatus.USER_NOT_EXISTS);
     }
 
-    public boolean isPasswordCorrect(@NotNull User user)
+    public boolean isPasswordCorrect(@NotNull User user, @NotNull User userInDatabase)
     {
         try
         {
             String encryptedPassword = SHA256Encrypted.encrypt(user.getPassword());
-            String userInDatabasePassword = this.userRepository.findUsersByUsername(user.getUsername())
-                                                               .getPassword();
+            String userInDatabasePassword = userInDatabase.getPassword();
 
             log.debug("Equaling passwords [User input: {}, Database: {}]", encryptedPassword, userInDatabasePassword);
 
