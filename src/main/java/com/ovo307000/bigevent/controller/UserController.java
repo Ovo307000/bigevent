@@ -4,6 +4,8 @@ import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.global.enumeration.status.UpdateStatus;
+import com.ovo307000.bigevent.global.properties.InterceptorProperties;
+import com.ovo307000.bigevent.global.properties.JWTProperties;
 import com.ovo307000.bigevent.global.result.Result;
 import com.ovo307000.bigevent.global.surety.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.global.utils.JWTUtil;
@@ -27,13 +29,20 @@ public class UserController
 {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private final UserService userService;
-    private final JWTUtil     jwtUtil;
+    private final UserService           userService;
+    private final JWTUtil               jwtUtil;
+    private final JWTProperties         jwtProperties;
+    private final InterceptorProperties interceptorProperties;
 
-    public UserController(@Qualifier("userService") UserService userService, JWTUtil jwtUtil)
+    public UserController(@Qualifier("userService") UserService userService,
+                          JWTUtil jwtUtil,
+                          JWTProperties jwtProperties,
+                          InterceptorProperties interceptorProperties)
     {
-        this.userService = userService;
-        this.jwtUtil     = jwtUtil;
+        this.userService           = userService;
+        this.jwtUtil               = jwtUtil;
+        this.jwtProperties         = jwtProperties;
+        this.interceptorProperties = interceptorProperties;
     }
 
     /**
@@ -143,13 +152,23 @@ public class UserController
                        .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
     }
 
+    // TODO: 由于不启用拦截，无法获取到当前登录用户的信息，需要完善
     @GetMapping("/userInfo")
     public Result<User> userInfo(@RequestHeader("Authorization") String token)
     {
         log.info("Getting user info by token: {}", token);
 
-        return Optional.ofNullable(this.userService.queryCurrentUserInfo(token))
-                       .map(Result::success)
-                       .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
+        if (this.interceptorProperties.isEnable())
+        {
+            return Optional.ofNullable(this.userService.queryCurrentUserInfo())
+                           .map(Result::success)
+                           .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
+        }
+        else
+        {
+            return Optional.ofNullable(this.userService.queryCurrentUserInfo(token))
+                           .map(Result::success)
+                           .orElse(Result.fail(RegisterStatus.USER_NOT_EXISTS.getMessage(), null));
+        }
     }
 }

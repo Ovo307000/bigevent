@@ -7,6 +7,7 @@ import com.ovo307000.bigevent.global.enumeration.status.Status;
 import com.ovo307000.bigevent.global.enumeration.status.UpdateStatus;
 import com.ovo307000.bigevent.global.surety.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.global.utils.JWTUtil;
+import com.ovo307000.bigevent.global.utils.ThreadLocalUtil;
 import com.ovo307000.bigevent.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -28,14 +29,18 @@ public class UserService
 {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    private final UserRepository userRepository;
-    private final JWTUtil        jwtUtil;
+    private final UserRepository          userRepository;
+    private final ThreadLocalUtil<Claims> threadLocalUtil;
+    private final JWTUtil                 jwtUtil;
 
     @Autowired
-    public UserService(@Qualifier("userRepository") UserRepository userRepository, JWTUtil jwtUtil)
+    public UserService(@Qualifier("userRepository") UserRepository userRepository,
+                       ThreadLocalUtil<Claims> threadLocalUtil,
+                       JWTUtil jwtUtil)
     {
-        this.userRepository = userRepository;
-        this.jwtUtil        = jwtUtil;
+        this.userRepository  = userRepository;
+        this.threadLocalUtil = threadLocalUtil;
+        this.jwtUtil         = jwtUtil;
     }
 
     public Status register(@NotNull User user) throws NoSuchAlgorithmException
@@ -68,6 +73,7 @@ public class UserService
     public Status login(@NotNull User user)
     {
         return Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
+                       // 使用 Map 做映射，将结果映射到 LoginStatus 中并返回
                        .map((User userInDatabase) ->
                             {
                                 if (this.isPasswordCorrect(user, userInDatabase))
@@ -86,7 +92,7 @@ public class UserService
     {
         try
         {
-            String encryptedPassword = SHA256Encrypted.encrypt(user.getPassword());
+            String encryptedPassword      = SHA256Encrypted.encrypt(user.getPassword());
             String userInDatabasePassword = userInDatabase.getPassword();
 
             log.debug("Equaling passwords [User input: {}, Database: {}]", encryptedPassword, userInDatabasePassword);
@@ -145,6 +151,17 @@ public class UserService
         return this.userRepository.findUsersByNicknameLikeIgnoreCase(nickname);
     }
 
+    public User queryCurrentUserInfo()
+    {
+        Claims claims = this.threadLocalUtil.getAndRemove();
+
+        String username = claims.get("username", String.class);
+        String password = claims.get("password", String.class);
+
+        return this.userRepository.findUsersByUsernameAndPassword(username, password)
+                                  .getFirst();
+    }
+
     public User queryCurrentUserInfo(String token)
     {
         Claims claims;
@@ -152,16 +169,16 @@ public class UserService
         try
         {
             claims = this.jwtUtil.verifyAndParseToken(token);
+
+            String username = claims.get("username", String.class);
+            String password = claims.get("password", String.class);
+
+            return this.userRepository.findUsersByUsernameAndPassword(username, password)
+                                      .getFirst();
         }
         catch (JwtException jwtException)
         {
-            throw new RuntimeException("Token verification failed: " + jwtException.getMessage());
+            throw new JwtException("Token verification failed: " + jwtException.getMessage());
         }
-
-        String username = claims.get("username", String.class);
-        String password = claims.get("password", String.class);
-
-        return this.userRepository.findUsersByUsernameAndPassword(username, password)
-                                  .getFirst();
     }
 }

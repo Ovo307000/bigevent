@@ -2,6 +2,7 @@ package com.ovo307000.bigevent.global.interceptor;
 
 import com.ovo307000.bigevent.global.properties.InterceptorProperties;
 import com.ovo307000.bigevent.global.utils.JWTUtil;
+import com.ovo307000.bigevent.global.utils.ThreadLocalUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,13 +16,17 @@ import java.util.Objects;
 @Component("loginInterceptor")
 public class LoginInterceptor implements HandlerInterceptor
 {
-    private final JWTUtil               jwtUtil;
-    private final InterceptorProperties interceptorProperties;
+    private final JWTUtil                 jwtUtil;
+    private final InterceptorProperties   interceptorProperties;
+    private final ThreadLocalUtil<Claims> threadLocalUtil;
 
-    public LoginInterceptor(JWTUtil jwtUtil, InterceptorProperties interceptorProperties)
+    public LoginInterceptor(JWTUtil jwtUtil,
+                            InterceptorProperties interceptorProperties,
+                            ThreadLocalUtil<Claims> threadLocalUtil)
     {
         this.jwtUtil               = jwtUtil;
         this.interceptorProperties = interceptorProperties;
+        this.threadLocalUtil       = threadLocalUtil;
     }
 
     @Override
@@ -43,7 +48,7 @@ public class LoginInterceptor implements HandlerInterceptor
         {
             final Claims claims = this.jwtUtil.verifyAndParseToken(requestHeader);
 
-            ThreadLocal.withInitial(() -> claims);
+            this.threadLocalUtil.set(claims);
 
             response.setStatus(200);
 
