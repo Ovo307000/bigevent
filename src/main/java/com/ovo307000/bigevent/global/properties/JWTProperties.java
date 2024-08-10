@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class JWTProperties
 {
     private String secret;
-    private Long   expirationOfMinutes;
+    private Long   expirationOfSeconds;
     private String algorithmNameUpperCase;
 
     public String getSecret()
@@ -21,15 +21,15 @@ public class JWTProperties
         this.secret = secret;
     }
 
-    public Long getExpirationOfMinutes()
+    public Long getExpirationOfSeconds()
     {
-        return this.expirationOfMinutes;
+        return this.expirationOfSeconds;
     }
 
 
-    public void setExpirationOfMinutes(Long expirationOfMinutes)
+    public void setExpirationOfSeconds(Long expirationOfSeconds)
     {
-        this.expirationOfMinutes = expirationOfMinutes;
+        this.expirationOfSeconds = expirationOfSeconds;
     }
 
     public String getAlgorithmNameUpperCase()

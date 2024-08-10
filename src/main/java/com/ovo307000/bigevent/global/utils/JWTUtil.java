@@ -3,6 +3,7 @@ package com.ovo307000.bigevent.global.utils;
 import com.ovo307000.bigevent.global.properties.JWTProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -49,25 +50,26 @@ public class JWTUtil
     // 生成JWT Token
     public String generateToken(String subject)
     {
-        LocalDateTime expirationDateTime = LocalDateTime.now()
-                                                        .plusMinutes(this.jwtProperties.getExpirationOfMinutes());
-
         return Jwts.builder()
                    .subject(subject)
                    .signWith(this.key)
                    .notBefore(Date.from(Instant.now()))
                    .issuedAt(Date.from(Instant.now()))
-                   .expiration(Date.from(expirationDateTime.atZone(ZoneId.systemDefault())
-                                                           .toInstant()))
+                   .expiration(Date.from(Instant.now()
+                                                .plusSeconds(this.jwtProperties.getExpirationOfSeconds())))
                    .id(UUID.randomUUID()
                            .toString())
                    .compact();
     }
 
+    public String generateTokenAndEncrypt(Map<String, Object> claims)
+    {
+    }
+
     public String generateToken(Map<String, Object> claims)
     {
         LocalDateTime expirationDateTime = LocalDateTime.now()
-                                                        .plusMinutes(this.jwtProperties.getExpirationOfMinutes());
+                                                        .plusMinutes(this.jwtProperties.getExpirationOfSeconds());
         return Jwts.builder()
                    .claims(claims)
                    .signWith(this.key)
