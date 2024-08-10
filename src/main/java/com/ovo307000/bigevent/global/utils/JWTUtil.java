@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -67,15 +65,13 @@ public class JWTUtil
 
     public String generateToken(Map<String, Object> claims)
     {
-        LocalDateTime expirationDateTime = LocalDateTime.now()
-                                                        .plusMinutes(this.jwtProperties.getExpirationOfSeconds());
         return Jwts.builder()
                    .claims(claims)
                    .signWith(this.key)
                    .notBefore(Date.from(Instant.now()))
                    .issuedAt(Date.from(Instant.now()))
-                   .expiration(Date.from(expirationDateTime.atZone(ZoneId.systemDefault())
-                                                           .toInstant()))
+                   .expiration(Date.from(Instant.now()
+                                                .plusSeconds(this.jwtProperties.getExpirationOfSeconds())))
                    .id(UUID.randomUUID()
                            .toString())
                    .compact();
