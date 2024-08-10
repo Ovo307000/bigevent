@@ -4,6 +4,7 @@ import com.ovo307000.bigevent.entity.User;
 import com.ovo307000.bigevent.global.enumeration.status.LoginStatus;
 import com.ovo307000.bigevent.global.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.global.result.Result;
+import com.ovo307000.bigevent.global.utils.JWTUtil;
 import com.ovo307000.bigevent.service.UserService;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Validated
@@ -24,10 +26,12 @@ public class UserController
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final JWTUtil     jwtUtil;
 
-    public UserController(@Qualifier("userService") UserService userService)
+    public UserController(@Qualifier("userService") UserService userService, JWTUtil jwtUtil)
     {
         this.userService = userService;
+        this.jwtUtil     = jwtUtil;
     }
 
     /**
@@ -62,7 +66,11 @@ public class UserController
         return switch (this.userService.login(new User(username, password)))
         {
             // TODO 2024年8月6日 00点50分 应该返回一个JWT Token
-            case LoginStatus.SUCCESS -> Result.success(LoginStatus.SUCCESS.getMessage(), "JWT Token");
+            case LoginStatus.SUCCESS -> Result.success(LoginStatus.SUCCESS.getMessage(),
+                                                       this.jwtUtil.generateToken(Map.of("username",
+                                                                                         username,
+                                                                                         "password",
+                                                                                         password)));
             case LoginStatus.PASSWORD_NOT_MATCH -> Result.fail(LoginStatus.PASSWORD_NOT_MATCH.getMessage());
             case LoginStatus.USER_NOT_EXISTS -> Result.fail(LoginStatus.USER_NOT_EXISTS.getMessage());
 

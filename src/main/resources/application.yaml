@@ -1,4 +1,4 @@
-spring  :
+spring     :
   application:
     name: big-event
 
@@ -18,10 +18,10 @@ spring  :
 
     open-in-view: true
 
-logging :
+logging    :
   level:
     com: debug
-register:
+register   :
   max-username-length            : 100
   min-username-length            : 1
 
@@ -47,7 +47,11 @@ register:
   email-formats                  : [ gmail.com, yahoo.com, outlook.com, hotmail.com ]
   picture-formats                : [ jpg, jpeg, png, gif, bmp, webp ]
 
-jwt     :
+jwt        :
   secret                   : "ovo307000"
   algorithm-name-upper-case: "HS256"
   expiration-of-seconds    : 604800
+
+interceptor:
+  enable               : true
+  exclude-path-patterns: [ /user/login, /user/register ]

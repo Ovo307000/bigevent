@@ -124,7 +124,7 @@ public class UserService
                                                                     user.getUserPic(),
                                                                     LocalDateTime.now());
 
-        log.info("Updated {} users", updatedCount);
+        log.info("Updated user: {}, count: {}", user, updatedCount);
 
         return updatedCount == 1 ? UpdateStatus.SUCCESS : UpdateStatus.FAILED;
     }
