@@ -31,7 +31,6 @@ public class LoginInterceptor implements HandlerInterceptor
     {
         ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<>();
 
-
         // 如果不需要拦截，直接放行
         if (! this.interceptorProperties.isEnable())
         {

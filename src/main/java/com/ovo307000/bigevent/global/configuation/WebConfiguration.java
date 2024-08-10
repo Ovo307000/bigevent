@@ -2,6 +2,7 @@ package com.ovo307000.bigevent.global.configuation;
 
 import com.ovo307000.bigevent.global.interceptor.LoginInterceptor;
 import com.ovo307000.bigevent.global.properties.InterceptorProperties;
+import com.ovo307000.bigevent.global.surety.checker.PropertiesCheck;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,17 +18,26 @@ public class WebConfiguration implements WebMvcConfigurer
     private static final Logger                log = LoggerFactory.getLogger(WebConfiguration.class);
     private final        LoginInterceptor      loginInterceptor;
     private final        InterceptorProperties interceptorProperties;
+    private final        PropertiesCheck       propertiesCheck;
 
-    public WebConfiguration(LoginInterceptor loginInterceptor, InterceptorProperties interceptorProperties)
+    public WebConfiguration(LoginInterceptor loginInterceptor,
+                            InterceptorProperties interceptorProperties,
+                            PropertiesCheck propertiesCheck)
     {
         this.loginInterceptor      = loginInterceptor;
         this.interceptorProperties = interceptorProperties;
+        this.propertiesCheck       = propertiesCheck;
     }
 
     @Override
     public void addInterceptors(@NotNull InterceptorRegistry registry)
     {
         List<String> excludePathPatterns = this.interceptorProperties.getExcludePathPatterns();
+
+        if (! this.propertiesCheck.checkPathFormat(excludePathPatterns))
+        {
+            throw new IllegalArgumentException("Exclude path patterns format error.");
+        }
 
         log.info("Exclude path patterns: {}", excludePathPatterns);
 
