@@ -3,7 +3,6 @@ package com.ovo307000.bigevent.global.utils;
 import com.ovo307000.bigevent.global.properties.JWTProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -62,9 +61,9 @@ public class JWTUtil
                    .compact();
     }
 
-    public String generateTokenAndEncrypt(Map<String, Object> claims)
-    {
-    }
+    // TODO:
+    //  2024年8月10日 18点52分
+    //      生成加密的JWT Token，待实现
 
     public String generateToken(Map<String, Object> claims)
     {
