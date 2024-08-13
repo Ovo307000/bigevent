@@ -126,18 +126,6 @@ public class Result<T>
             this.message = message;
         }
 
-        public static Code valueOf(int code)
-        {
-            for (Code c : values())
-            {
-                if (c.code == code)
-                {
-                    return c;
-                }
-            }
-            return null;
-        }
-
         public int getCode()
         {
             return this.code;
