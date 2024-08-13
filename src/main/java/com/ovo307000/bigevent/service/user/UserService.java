@@ -1,8 +1,7 @@
 package com.ovo307000.bigevent.service.user;
 
-import com.ovo307000.bigevent.core.constants.enumeration.status.LoginStatus;
-import com.ovo307000.bigevent.core.constants.enumeration.status.RegisterStatus;
 import com.ovo307000.bigevent.core.constants.enumeration.status.Status;
+import com.ovo307000.bigevent.core.constants.enumeration.status.UserStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
 import com.ovo307000.bigevent.core.utils.ThreadLocalUtil;
@@ -47,7 +46,7 @@ public class UserService
     {
         if (this.isUserExists(user))
         {
-            return RegisterStatus.USER_ALREADY_EXISTS;
+            return UserStatus.USER_ALREADY_EXISTS;
         }
         else
         {
@@ -60,7 +59,7 @@ public class UserService
 
             this.userRepository.save(newUser);
 
-            return RegisterStatus.SUCCESS;
+            return UserStatus.SUCCESS;
         }
     }
 
@@ -73,19 +72,19 @@ public class UserService
     public Status login(@NotNull UserDTO user)
     {
         return Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
-                       // 使用 Map 做映射，将结果映射到 LoginStatus 中并返回
+                       // 使用 Map 做映射，将结果映射到 UserStatus 中并返回
                        .map((UserDTO userInDatabase) ->
                             {
                                 if (this.isPasswordCorrect(user, userInDatabase))
                                 {
-                                    return LoginStatus.SUCCESS;
+                                    return UserStatus.SUCCESS;
                                 }
                                 else
                                 {
-                                    return LoginStatus.PASSWORD_INCORRECT;
+                                    return UserStatus.PASSWORD_CORRECT;
                                 }
                             })
-                       .orElse(LoginStatus.USER_NOT_EXISTS);
+                       .orElse(UserStatus.USER_ALREADY_EXISTS);
     }
 
     public boolean isPasswordCorrect(@NotNull UserDTO user, @NotNull UserDTO userInDatabase)
