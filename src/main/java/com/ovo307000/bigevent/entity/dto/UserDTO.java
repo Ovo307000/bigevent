@@ -55,15 +55,15 @@ public class UserDTO
                    Set<CategoryDTO> categories,
                    Set<ArticleDTO> articles)
     {
-        this.username   = username;
-        this.password   = password;
-        this.nickname   = nickname;
+        this.username    = username;
+        this.password    = password;
+        this.nickname    = nickname;
         this.email       = email;
         this.userPicture = userPic;
         this.createTime  = createTime;
-        this.updateTime = updateTime;
-        this.categories = categories;
-        this.articles   = articles;
+        this.updateTime  = updateTime;
+        this.categories  = categories;
+        this.articles    = articles;
     }
 
     public UserDTO()
@@ -78,9 +78,9 @@ public class UserDTO
 
     public UserDTO(String username, String password, String nickname, String email, String userPic)
     {
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
+        this.username    = username;
+        this.password    = password;
+        this.nickname    = nickname;
         this.email       = email;
         this.userPicture = userPic;
     }

@@ -33,27 +33,27 @@ bigevent:
 
   user       :
     register:
-      max-username-length            : 100
-      min-username-length            : 1
+      max-username-length               : 100
+      min-username-length               : 1
 
-      max-nickname-length            : 100
-      min-nickname-length            : 1
+      max-nickname-length               : 100
+      min-nickname-length               : 1
 
-      max-password-length            : 100
-      min-password-length            : 1
+      max-password-length               : 100
+      min-password-length               : 1
       is-password-need-number           : false
       is-password-need-uppercase        : false
-      password-regex                 : "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$"
+      password-regex                    : "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$"
 
       is-password-need-special-character: false
-      max-picture-size-of-bytes      : 10240000
-      min-picture-size-of-bytes      : 256
+      max-picture-size-of-bytes         : 10240000
+      min-picture-size-of-bytes         : 256
 
-      enable-username-check          : true
-      enable-nickname-check          : true
-      enable-password-check          : true
-      enable-email-check             : true
-      enable-picture-check           : true
+      enable-username-check             : true
+      enable-nickname-check             : true
+      enable-password-check             : true
+      enable-email-check                : true
+      enable-picture-check              : true
 
-      email-formats                  : [ gmail.com, yahoo.com, outlook.com, hotmail.com ]
-      picture-formats        : [ jpg, jpeg, png, gif, bmp, webp ]
+      email-formats                     : [ gmail.com, yahoo.com, outlook.com, hotmail.com ]
+      picture-formats                   : [ jpg, jpeg, png, gif, bmp, webp ]

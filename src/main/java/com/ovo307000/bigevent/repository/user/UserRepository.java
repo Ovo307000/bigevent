@@ -23,7 +23,8 @@ public interface UserRepository extends JpaRepository<UserDTO, Integer>
 
     List<UserDTO> findUsersByUsernameLikeIgnoreCase(@Param("username") String username);
 
-    List<UserDTO> findUsersByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
+    List<UserDTO> findUsersByUsernameAndPassword(@Param("username") String username,
+                                                 @Param("password") String password);
 
     @Modifying
     @Transactional

@@ -95,7 +95,9 @@ public class UserService
             String encryptedPassword      = SHA256Encrypted.encrypt(user.getPassword());
             String userInDatabasePassword = userInDatabase.getPassword();
 
-            log.debug("Equaling passwords [UserDTO input: {}, Database: {}]", encryptedPassword, userInDatabasePassword);
+            log.debug("Equaling passwords [UserDTO input: {}, Database: {}]",
+                      encryptedPassword,
+                      userInDatabasePassword);
 
             return Objects.equals(userInDatabasePassword, encryptedPassword);
         }

@@ -1,8 +1,8 @@
 package com.ovo307000.bigevent.core.security.checker;
 
+import com.ovo307000.bigevent.config.properties.RegisterProperties;
 import com.ovo307000.bigevent.core.excaption.EmailFormatException;
 import com.ovo307000.bigevent.core.excaption.NicknameInvalidException;
-import com.ovo307000.bigevent.config.properties.RegisterProperties;
 import org.springframework.stereotype.Component;
 
 @Component("userChecker")
