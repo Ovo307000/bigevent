@@ -29,7 +29,7 @@ public class UserDTO
     private String email = "";
 
     @Column(length = 128)
-    private String userPic = "";
+    private String userPicture = "";
 
     @Column(nullable = false)
     private LocalDateTime createTime;
@@ -58,9 +58,9 @@ public class UserDTO
         this.username   = username;
         this.password   = password;
         this.nickname   = nickname;
-        this.email      = email;
-        this.userPic    = userPic;
-        this.createTime = createTime;
+        this.email       = email;
+        this.userPicture = userPic;
+        this.createTime  = createTime;
         this.updateTime = updateTime;
         this.categories = categories;
         this.articles   = articles;
@@ -81,8 +81,8 @@ public class UserDTO
         this.username = username;
         this.password = password;
         this.nickname = nickname;
-        this.email    = email;
-        this.userPic  = userPic;
+        this.email       = email;
+        this.userPicture = userPic;
     }
 
     @Override
@@ -93,7 +93,7 @@ public class UserDTO
                             this.password,
                             this.nickname,
                             this.email,
-                            this.userPic,
+                            this.userPicture,
                             this.createTime,
                             this.updateTime,
                             this.categories,
@@ -117,7 +117,7 @@ public class UserDTO
                Objects.equals(this.password, user.password) &&
                Objects.equals(this.nickname, user.nickname) &&
                Objects.equals(this.email, user.email) &&
-               Objects.equals(this.userPic, user.userPic) &&
+               Objects.equals(this.userPicture, user.userPicture) &&
                Objects.equals(this.createTime, user.createTime) &&
                Objects.equals(this.updateTime, user.updateTime) &&
                Objects.equals(this.categories, user.categories) &&
@@ -174,14 +174,14 @@ public class UserDTO
         this.email = email;
     }
 
-    public String getUserPic()
+    public String getUserPicture()
     {
-        return this.userPic;
+        return this.userPicture;
     }
 
-    public void setUserPic(String userPic)
+    public void setUserPicture(String userPicture)
     {
-        this.userPic = userPic;
+        this.userPicture = userPicture;
     }
 
     public LocalDateTime getCreateTime()
