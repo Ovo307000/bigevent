@@ -6,13 +6,14 @@ import com.ovo307000.bigevent.core.constants.enumeration.status.Status;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
 import com.ovo307000.bigevent.core.utils.ThreadLocalUtil;
-import com.ovo307000.bigevent.entity.User;
+import com.ovo307000.bigevent.entity.dto.UserDTO;
 import com.ovo307000.bigevent.repository.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class UserService
         this.jwtUtil         = jwtUtil;
     }
 
-    public Status register(@NotNull User user) throws NoSuchAlgorithmException
+    public Status register(@NotNull UserDTO user) throws NoSuchAlgorithmException
     {
         if (this.isUserExists(user))
         {
@@ -50,7 +51,7 @@ public class UserService
         }
         else
         {
-            User newUser = new User();
+            UserDTO newUser = new UserDTO();
 
             newUser.setCreateTime(LocalDateTime.now());
             newUser.setUpdateTime(LocalDateTime.now());
@@ -63,17 +64,17 @@ public class UserService
         }
     }
 
-    public boolean isUserExists(@NotNull User user)
+    public boolean isUserExists(@NotNull UserDTO user)
     {
-        return Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
+        return Optional.ofNullable(this.userRepository.findUsersById(user.getId()))
                        .isPresent();
     }
 
-    public Status login(@NotNull User user)
+    public Status login(@NotNull UserDTO user)
     {
         return Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
                        // 使用 Map 做映射，将结果映射到 LoginStatus 中并返回
-                       .map((User userInDatabase) ->
+                       .map((UserDTO userInDatabase) ->
                             {
                                 if (this.isPasswordCorrect(user, userInDatabase))
                                 {
@@ -87,14 +88,14 @@ public class UserService
                        .orElse(LoginStatus.USER_NOT_EXISTS);
     }
 
-    public boolean isPasswordCorrect(@NotNull User user, @NotNull User userInDatabase)
+    public boolean isPasswordCorrect(@NotNull UserDTO user, @NotNull UserDTO userInDatabase)
     {
         try
         {
             String encryptedPassword      = SHA256Encrypted.encrypt(user.getPassword());
             String userInDatabasePassword = userInDatabase.getPassword();
 
-            log.debug("Equaling passwords [User input: {}, Database: {}]", encryptedPassword, userInDatabasePassword);
+            log.debug("Equaling passwords [UserDTO input: {}, Database: {}]", encryptedPassword, userInDatabasePassword);
 
             return Objects.equals(userInDatabasePassword, encryptedPassword);
         }
@@ -106,27 +107,27 @@ public class UserService
         }
     }
 
-    public List<User> findUserByNickname(String nickname)
+    public List<UserDTO> findUserByNickname(String nickname)
     {
         return this.userRepository.findUsersByNickname(nickname);
     }
 
-    public User findUserByUsername(String username)
+    public UserDTO findUserByUsername(String username)
     {
         return this.userRepository.findUsersByUsername(username);
     }
 
-    public List<User> findUserByUsernameLikeIgnoreCase(String username)
+    public List<UserDTO> findUserByUsernameLikeIgnoreCase(String username)
     {
         return this.userRepository.findUsersByUsernameLikeIgnoreCase(username);
     }
 
-    public List<User> findUserByNicknameLikeIgnoreCase(String nickname)
+    public List<UserDTO> findUserByNicknameLikeIgnoreCase(String nickname)
     {
         return this.userRepository.findUsersByNicknameLikeIgnoreCase(nickname);
     }
 
-    public User queryCurrentUserInfo()
+    public UserDTO queryCurrentUserInfo()
     {
         Claims claims = this.threadLocalUtil.getAndRemove();
 
@@ -137,7 +138,7 @@ public class UserService
                                   .getFirst();
     }
 
-    public User queryCurrentUserInfo(String token)
+    public UserDTO queryCurrentUserInfo(String token)
     {
         Claims claims;
 
@@ -157,17 +158,23 @@ public class UserService
         }
     }
 
-    public boolean update(User user)
+    public UserDTO update(UserDTO user) throws NoSuchAlgorithmException
     {
-        user.setUpdateTime(LocalDateTime.now());
+        if (! this.isUserExists(user))
+        {
+            return null;
+        }
 
-        if (this.isUserExists(user))
-        {
-            return this.userRepository.updateUserById(user.getId(), user) > 0;
-        }
-        else
-        {
-            return false;
-        }
+        UserDTO newUser = new UserDTO();
+
+        BeanUtils.copyProperties(user, newUser);
+
+        newUser.setUpdateTime(LocalDateTime.now());
+        newUser.setCreateTime(Optional.ofNullable(newUser.getCreateTime())
+                                      .orElse(LocalDateTime.now()));
+        newUser.setPassword(SHA256Encrypted.encrypt(Optional.ofNullable(user.getPassword())
+                                                            .orElse("123456")));
+
+        return this.userRepository.save(newUser);
     }
 }

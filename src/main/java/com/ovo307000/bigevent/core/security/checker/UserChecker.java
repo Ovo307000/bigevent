@@ -95,7 +95,7 @@ public class UserChecker
     {
         if (userPicture == null || userPicture.isEmpty())
         {
-            return new IllegalArgumentException("User picture is empty");
+            return new IllegalArgumentException("UserDTO picture is empty");
         }
 
         if (! this.registerProperties.getEnablePictureCheck())
@@ -107,11 +107,11 @@ public class UserChecker
                                    .stream()
                                    .noneMatch(userPicture::endsWith))
         {
-            return new IllegalArgumentException("User picture is invalid");
+            return new IllegalArgumentException("UserDTO picture is invalid");
         }
         if (! userPicture.matches("^(http|https)://.*"))
         {
-            return new IllegalArgumentException("User picture is invalid");
+            return new IllegalArgumentException("UserDTO picture is invalid");
         }
 
         // TODO: 检查图片是否存在，并且是否能够访问，大小是否在限制范围内

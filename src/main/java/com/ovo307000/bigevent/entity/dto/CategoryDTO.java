@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.entity;
+package com.ovo307000.bigevent.entity.dto;
 
 import jakarta.persistence.*;
 
@@ -8,12 +8,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "category")
-public class Category
+public class CategoryDTO
 {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false, length = 32)
     private String categoryName;
@@ -23,7 +22,7 @@ public class Category
 
     @ManyToOne
     @JoinColumn(name = "create_user", nullable = false)
-    private User createUser;
+    private UserDTO createUser;
 
     @Column(nullable = false)
     private LocalDateTime createTime;
@@ -35,18 +34,18 @@ public class Category
 
     // Mapping to other entities
     @OneToMany(mappedBy = "category")
-    private Set<Article> articles;
+    private Set<ArticleDTO> articles;
 
-    public Category()
+    public CategoryDTO()
     {
     }
 
-    public Category(String categoryName,
-                    String categoryAlias,
-                    User createUser,
-                    LocalDateTime createTime,
-                    LocalDateTime updateTime,
-                    Set<Article> articles)
+    public CategoryDTO(String categoryName,
+                       String categoryAlias,
+                       UserDTO createUser,
+                       LocalDateTime createTime,
+                       LocalDateTime updateTime,
+                       Set<ArticleDTO> articles)
     {
 
 
@@ -81,7 +80,7 @@ public class Category
         {
             return false;
         }
-        Category category = (Category) o;
+        CategoryDTO category = (CategoryDTO) o;
         return Objects.equals(this.id, category.id) &&
                Objects.equals(this.categoryName, category.categoryName) &&
                Objects.equals(this.categoryAlias, category.categoryAlias) &&
@@ -91,12 +90,12 @@ public class Category
                Objects.equals(this.articles, category.articles);
     }
 
-    public Integer getId()
+    public Long getId()
     {
         return this.id;
     }
 
-    public void setId(Integer id)
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -121,12 +120,12 @@ public class Category
         this.categoryAlias = categoryAlias;
     }
 
-    public User getCreateUser()
+    public UserDTO getCreateUser()
     {
         return this.createUser;
     }
 
-    public void setCreateUser(User createUser)
+    public void setCreateUser(UserDTO createUser)
     {
         this.createUser = createUser;
     }
@@ -151,12 +150,12 @@ public class Category
         this.updateTime = updateTime;
     }
 
-    public Set<Article> getArticles()
+    public Set<ArticleDTO> getArticles()
     {
         return this.articles;
     }
 
-    public void setArticles(Set<Article> articles)
+    public void setArticles(Set<ArticleDTO> articles)
     {
         this.articles = articles;
     }

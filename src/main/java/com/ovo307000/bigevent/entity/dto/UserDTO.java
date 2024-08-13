@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.entity;
+package com.ovo307000.bigevent.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -9,9 +9,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User
+public class UserDTO
 {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,20 +40,20 @@ public class User
 
     // Mapping to other entities
     @OneToMany(mappedBy = "createUser")
-    private Set<Category> categories;
+    private Set<CategoryDTO> categories;
 
     @OneToMany(mappedBy = "createUser")
-    private Set<Article> articles;
+    private Set<ArticleDTO> articles;
 
-    public User(String username,
-                String password,
-                String nickname,
-                String email,
-                String userPic,
-                LocalDateTime createTime,
-                LocalDateTime updateTime,
-                Set<Category> categories,
-                Set<Article> articles)
+    public UserDTO(String username,
+                   String password,
+                   String nickname,
+                   String email,
+                   String userPic,
+                   LocalDateTime createTime,
+                   LocalDateTime updateTime,
+                   Set<CategoryDTO> categories,
+                   Set<ArticleDTO> articles)
     {
         this.username   = username;
         this.password   = password;
@@ -67,17 +66,17 @@ public class User
         this.articles   = articles;
     }
 
-    public User()
+    public UserDTO()
     {
     }
 
-    public User(String username, String password)
+    public UserDTO(String username, String password)
     {
         this.username = username;
         this.password = password;
     }
 
-    public User(String username, String password, String nickname, String email, String userPic)
+    public UserDTO(String username, String password, String nickname, String email, String userPic)
     {
         this.username = username;
         this.password = password;
@@ -112,7 +111,7 @@ public class User
         {
             return false;
         }
-        User user = (User) o;
+        UserDTO user = (UserDTO) o;
         return Objects.equals(this.id, user.id) &&
                Objects.equals(this.username, user.username) &&
                Objects.equals(this.password, user.password) &&
@@ -205,22 +204,22 @@ public class User
         this.updateTime = updateTime;
     }
 
-    public Set<Category> getCategories()
+    public Set<CategoryDTO> getCategories()
     {
         return this.categories;
     }
 
-    public void setCategories(Set<Category> categories)
+    public void setCategories(Set<CategoryDTO> categories)
     {
         this.categories = categories;
     }
 
-    public Set<Article> getArticles()
+    public Set<ArticleDTO> getArticles()
     {
         return this.articles;
     }
 
-    public void setArticles(Set<Article> articles)
+    public void setArticles(Set<ArticleDTO> articles)
     {
         this.articles = articles;
     }

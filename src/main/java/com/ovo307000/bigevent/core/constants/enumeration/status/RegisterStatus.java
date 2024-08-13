@@ -2,8 +2,8 @@ package com.ovo307000.bigevent.core.constants.enumeration.status;
 
 public enum RegisterStatus implements Status
 {
-    USER_ALREADY_EXISTS("User already exists", 1000),
-    USER_NOT_EXISTS("User does not exist", 1010),
+    USER_ALREADY_EXISTS("UserDTO already exists", 1000),
+    USER_NOT_EXISTS("UserDTO does not exist", 1010),
 
     USERNAME_INVALID("Username is invalid", 1020),
 
@@ -17,11 +17,11 @@ public enum RegisterStatus implements Status
     EMAIL_INVALID("Email is invalid", 1060),
     EMAIL_EXISTS("Email exists", 1061),
 
-    USERPIC_INVALID("User picture is invalid", 1070),
+    USERPIC_INVALID("UserDTO picture is invalid", 1070),
 
-    SUCCESS("User register success", 200),
+    SUCCESS("UserDTO register success", 200),
 
-    FAILED("User register failure", 400);
+    FAILED("UserDTO register failure", 400);
 
     private final String  message;
     private final Integer code;

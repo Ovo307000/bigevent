@@ -2,7 +2,7 @@ package com.ovo307000.bigevent.core.constants.enumeration.status;
 
 public enum ArticleAStatus implements Status
 {
-    ARTICLE_NOT_FOUND("Article not found", 1010);
+    ARTICLE_NOT_FOUND("ArticleDTO not found", 1010);
 
     private final String  message;
     private final Integer code;

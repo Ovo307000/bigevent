@@ -1,4 +1,4 @@
-package com.ovo307000.bigevent.entity;
+package com.ovo307000.bigevent.entity.dto;
 
 import jakarta.persistence.*;
 
@@ -7,11 +7,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "article")
-public class Article
+public class ArticleDTO
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false, length = 30)
     private String title;
@@ -27,11 +27,11 @@ public class Article
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private Category category;
+    private CategoryDTO category;
 
     @ManyToOne
     @JoinColumn(name = "create_user", nullable = false)
-    private User createUser;
+    private UserDTO createUser;
 
     @Column(nullable = false)
     private LocalDateTime createTime;
@@ -39,14 +39,14 @@ public class Article
     @Column(nullable = false)
     private LocalDateTime updateTime;
 
-    public Article(String title,
-                   String content,
-                   String coverImg,
-                   String state,
-                   Category category,
-                   User createUser,
-                   LocalDateTime createTime,
-                   LocalDateTime updateTime)
+    public ArticleDTO(String title,
+                      String content,
+                      String coverImg,
+                      String state,
+                      CategoryDTO category,
+                      UserDTO createUser,
+                      LocalDateTime createTime,
+                      LocalDateTime updateTime)
     {
         this.title      = title;
         this.content    = content;
@@ -58,7 +58,7 @@ public class Article
         this.updateTime = updateTime;
     }
 
-    public Article()
+    public ArticleDTO()
     {
     }
 
@@ -87,7 +87,7 @@ public class Article
         {
             return false;
         }
-        Article article = (Article) o;
+        ArticleDTO article = (ArticleDTO) o;
         return Objects.equals(this.id, article.id) &&
                Objects.equals(this.title, article.title) &&
                Objects.equals(this.content, article.content) &&
@@ -99,12 +99,12 @@ public class Article
                Objects.equals(this.updateTime, article.updateTime);
     }
 
-    public Integer getId()
+    public Long getId()
     {
         return this.id;
     }
 
-    public void setId(Integer id)
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -149,22 +149,22 @@ public class Article
         this.state = state;
     }
 
-    public Category getCategory()
+    public CategoryDTO getCategory()
     {
         return this.category;
     }
 
-    public void setCategory(Category category)
+    public void setCategory(CategoryDTO category)
     {
         this.category = category;
     }
 
-    public User getCreateUser()
+    public UserDTO getCreateUser()
     {
         return this.createUser;
     }
 
-    public void setCreateUser(User createUser)
+    public void setCreateUser(UserDTO createUser)
     {
         this.createUser = createUser;
     }

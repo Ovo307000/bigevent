@@ -2,7 +2,7 @@ package com.ovo307000.bigevent.core.constants.enumeration.status;
 
 public enum UpdateStatus implements Status
 {
-    USER_NOT_EXISTS(1000, "User does not exist"),
+    USER_NOT_EXISTS(1000, "UserDTO does not exist"),
 
     USERNAME_INVALID(1010, "Username is invalid"),
 

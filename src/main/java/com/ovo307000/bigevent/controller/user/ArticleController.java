@@ -1,6 +1,6 @@
 package com.ovo307000.bigevent.controller.user;
 
-import com.ovo307000.bigevent.entity.Article;
+import com.ovo307000.bigevent.entity.dto.ArticleDTO;
 import com.ovo307000.bigevent.core.constants.enumeration.status.ArticleAStatus;
 import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.user.ArticleService;
@@ -26,7 +26,7 @@ public class ArticleController
     public Result<?> list()
     {
         return Optional.ofNullable(this.articleService.list())
-                       .filter((List<Article> articles) -> ! articles.isEmpty())
+                       .filter((List<ArticleDTO> articles) -> ! articles.isEmpty())
                        .map(Result::success)
                        .orElse(Result.fail(ArticleAStatus.ARTICLE_NOT_FOUND.getMessage(), null));
     }

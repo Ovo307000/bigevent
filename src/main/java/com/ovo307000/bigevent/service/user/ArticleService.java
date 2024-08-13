@@ -1,6 +1,6 @@
 package com.ovo307000.bigevent.service.user;
 
-import com.ovo307000.bigevent.entity.Article;
+import com.ovo307000.bigevent.entity.dto.ArticleDTO;
 import com.ovo307000.bigevent.repository.user.ArticleRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class ArticleService
         this.articleRepository = articleRepository;
     }
 
-    public List<Article> list()
+    public List<ArticleDTO> list()
     {
         return this.articleRepository.findAll();
     }
