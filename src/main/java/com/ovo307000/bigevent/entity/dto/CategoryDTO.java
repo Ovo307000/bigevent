@@ -15,12 +15,12 @@ public class CategoryDTO
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
     @Column(nullable = false, length = 32)
+    @NotEmpty(message = "category name cannot be empty")
     private String categoryName;
 
-    @NotEmpty
     @Column(nullable = false, length = 32)
+    @NotEmpty(message = "category alias cannot be empty")
     private String categoryAlias;
 
     @ManyToOne
