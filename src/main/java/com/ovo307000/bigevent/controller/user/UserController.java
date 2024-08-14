@@ -7,7 +7,6 @@ import com.ovo307000.bigevent.entity.dto.UserDTO;
 import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.user.UserService;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -146,7 +145,7 @@ public class UserController
     }
 
     @PatchMapping("/updateAvatar")
-    public Result<?> updateAvatar(@RequestParam @URL String avatarUrl)
+    public Result<?> updateAvatar(@RequestParam String avatarUrl)
     {
         return Optional.ofNullable(this.userService.updateAvatar(avatarUrl))
                        .map(Result::success)
