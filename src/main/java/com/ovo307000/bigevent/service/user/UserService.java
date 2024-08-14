@@ -1,7 +1,6 @@
 package com.ovo307000.bigevent.service.user;
 
 import com.ovo307000.bigevent.config.properties.RegisterProperties;
-import com.ovo307000.bigevent.core.constants.enumeration.status.Status;
 import com.ovo307000.bigevent.core.constants.enumeration.status.UserStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.security.generater.DefaultValueGenerator;
@@ -46,7 +45,7 @@ public class UserService
         this.registerProperties    = registerProperties;
     }
 
-    public Status register(@NotNull UserDTO user) throws NoSuchAlgorithmException
+    public String register(@NotNull UserDTO user) throws NoSuchAlgorithmException
     {
         if (this.isUserExists(user))
         {
@@ -86,7 +85,7 @@ public class UserService
      * 3. 如果密码正确，返回登录成功状态；否则返回密码错误状态
      * 4. 如果没有找到用户信息，则返回用户已存在状态
      */
-    public Status login(@NotNull UserDTO user)
+    public String login(@NotNull UserDTO user)
     {
         // 尝试查找数据库中与提供的用户名匹配的用户信息
         return Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
@@ -139,7 +138,7 @@ public class UserService
         return this.userRepository.findUsersByNicknameLikeIgnoreCase(nickname);
     }
 
-    public UserDTO queryCurrentUserInfo()
+    public @Nullable UserDTO queryCurrentUserInfo()
     {
         Claims claims = this.threadLocalUtil.getAndRemove();
 
@@ -277,36 +276,31 @@ public class UserService
         // 检查新密码和重复密码是否一致
         if (! Objects.equals(newPassword, repeatPassword))
         {
-            throw new IllegalArgumentException("The new password and repeat password are not equal");
+            throw new IllegalArgumentException("The new passwordInDatabase and repeat passwordInDatabase are not equal");
         }
 
         // 从线程本地获取当前用户信息
-        UserDTO userByThreadLocal = Objects.requireNonNull(this.findUserByThreadLocal(),
-                                                           "Failed to get user from ThreadLocal");
+        UserDTO user = Objects.requireNonNull(this.findUserByThreadLocal(), "Failed to get user from ThreadLocal");
+        String passwordInDatabase = Objects.requireNonNull(user.getPassword(),
+                                                           "Failed to get user passwordInDatabase from ThreadLocal");
+
         // 对旧密码进行加密
         String encryptedOldPassword = SHA256Encrypted.encrypt(oldPassword);
 
         // 验证加密后的旧密码是否与数据库中存储的密码一致
-        if (! Objects.equals(encryptedOldPassword,
-                             this.findUserById(userByThreadLocal.getId())
-                                 .getPassword()))
+        if (! Objects.equals(encryptedOldPassword, passwordInDatabase))
         {
-            throw new IllegalArgumentException("The old password is incorrect");
+            throw new IllegalArgumentException("The old passwordInDatabase is incorrect");
         }
 
         // 对新密码进行加密
         String encryptedNewPassword = SHA256Encrypted.encrypt(newPassword);
 
         // 更新用户密码和更新时间
-        userByThreadLocal.setPassword(encryptedNewPassword);
-        userByThreadLocal.setUpdateTime(LocalDateTime.now());
+        user.setPassword(encryptedNewPassword);
+        user.setUpdateTime(LocalDateTime.now());
 
         // 保存更新后的用户信息至数据库，并返回
-        return this.userRepository.save(userByThreadLocal);
-    }
-
-    public UserDTO findUserById(@NotNull Long id)
-    {
-        return this.userRepository.findUsersById(id);
+        return this.userRepository.save(user);
     }
 }

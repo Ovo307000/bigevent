@@ -1,6 +1,5 @@
 package com.ovo307000.bigevent.controller.user;
 
-import com.ovo307000.bigevent.core.constants.enumeration.status.Status;
 import com.ovo307000.bigevent.core.constants.enumeration.status.UserStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
@@ -54,10 +53,10 @@ public class UserController
 
         return switch (this.userService.register(new UserDTO(username, password)))
         {
-            case UserStatus.SUCCESS -> Result.success(UserStatus.SUCCESS.getMessage());
-            case UserStatus.USER_ALREADY_EXISTS -> Result.fail(UserStatus.USER_ALREADY_EXISTS.getMessage());
+            case UserStatus.SUCCESS -> Result.success(UserStatus.SUCCESS);
+            case UserStatus.USER_ALREADY_EXISTS -> Result.fail(UserStatus.USER_ALREADY_EXISTS);
 
-            default -> Result.fail(UserStatus.FAILED.getMessage());
+            default -> Result.fail(UserStatus.FAILED);
         };
     }
 
@@ -75,11 +74,11 @@ public class UserController
 
         return switch (this.userService.login(new UserDTO(username, password)))
         {
-            case UserStatus.SUCCESS -> Result.success(UserStatus.SUCCESS.getMessage(), token);
-            case UserStatus.PASSWORD_MISMATCH -> Result.fail(UserStatus.PASSWORD_MISMATCH.getMessage(), null);
-            case UserStatus.USER_NOT_EXISTS -> Result.fail(UserStatus.USER_NOT_EXISTS.getMessage(), null);
+            case UserStatus.SUCCESS -> Result.success(UserStatus.SUCCESS, token);
+            case UserStatus.PASSWORD_MISMATCH -> Result.fail(UserStatus.PASSWORD_MISMATCH, null);
+            case UserStatus.USER_NOT_EXISTS -> Result.fail(UserStatus.USER_NOT_EXISTS, null);
 
-            default -> Result.fail(UserStatus.FAILED.getMessage(), null);
+            default -> Result.fail(UserStatus.FAILED, null);
         };
     }
 
@@ -91,7 +90,7 @@ public class UserController
         return Optional.ofNullable(this.userService.findUserByNickname(nickname))
                        .filter((List<UserDTO> users) -> ! users.isEmpty())
                        .map(Result::success)
-                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS.getMessage(), null));
+                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
     }
 
     @GetMapping("/findUserByUsernameLikeIgnoreCase")
@@ -102,7 +101,7 @@ public class UserController
         return Optional.ofNullable(this.userService.findUserByUsernameLikeIgnoreCase(username))
                        .filter((List<UserDTO> users) -> ! users.isEmpty())
                        .map(Result::success)
-                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS.getMessage(), null));
+                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
     }
 
     @GetMapping("/findUserByNicknameLikeIgnoreCase")
@@ -113,7 +112,7 @@ public class UserController
         return Optional.ofNullable(this.userService.findUserByNicknameLikeIgnoreCase(nickname))
                        .filter((List<UserDTO> users) -> ! users.isEmpty())
                        .map(Result::success)
-                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS.getMessage(), null));
+                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
     }
 
     @GetMapping("/findUserByUsername")
@@ -123,7 +122,7 @@ public class UserController
 
         return Optional.ofNullable(this.userService.findUserByUsername(username))
                        .map(Result::success)
-                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS.getMessage(), null));
+                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
     }
 
     // TODO: 由于不启用拦截，无法获取到当前登录用户的信息，需要完善
@@ -134,7 +133,7 @@ public class UserController
 
         return Optional.ofNullable(this.userService.queryCurrentUserInfo())
                        .map(Result::success)
-                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS.getMessage(), null));
+                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
     }
 
     @PutMapping("/update")
@@ -142,7 +141,7 @@ public class UserController
     {
         return Optional.ofNullable(this.userService.update(user))
                        .map(Result::success)
-                       .orElse(Result.fail(UserStatus.FAILED.getMessage(), null));
+                       .orElse(Result.fail(UserStatus.FAILED, null));
     }
 
     @PatchMapping("/updateAvatar")
@@ -150,28 +149,28 @@ public class UserController
     {
         return Optional.ofNullable(this.userService.updateAvatar(avatarUrl))
                        .map(Result::success)
-                       .orElse(Result.fail(UserStatus.FAILED.getMessage(), null));
+                       .orElse(Result.fail(UserStatus.FAILED, null));
     }
 
     @PatchMapping("/updatePwd")
     public Result<UserDTO> updatePassword(@RequestBody Map<String, Object> params) throws NoSuchAlgorithmException
     {
         String repeatPassword = (String) Objects.requireNonNull(params.get("re_pwd"),
-                                                                UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
+                                                                UserStatus.PASSWORD_CANNOT_BE_EMPTY);
         String oldPassword = (String) Objects.requireNonNull(params.get("old_pwd"),
-                                                             UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
+                                                             UserStatus.PASSWORD_CANNOT_BE_EMPTY);
         String newPassword = (String) Objects.requireNonNull(params.get("new_pwd"),
-                                                             UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
+                                                             UserStatus.PASSWORD_CANNOT_BE_EMPTY);
 
         if (! StringUtils.hasLength(repeatPassword) ||
             ! StringUtils.hasLength(oldPassword) ||
             ! StringUtils.hasLength(newPassword))
         {
-            return Result.fail(UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage(), null);
+            return Result.fail(UserStatus.PASSWORD_CANNOT_BE_EMPTY, null);
         }
 
         return Optional.ofNullable(this.userService.updateUserPassword(newPassword, oldPassword, repeatPassword))
                        .map(Result::success)
-                       .orElse(Result.fail(UserStatus.FAILED.getMessage(), null));
+                       .orElse(Result.fail(UserStatus.FAILED, null));
     }
 }

@@ -13,7 +13,7 @@ public class DefaultValueGenerator
     private final SecureRandom secureRandom = new SecureRandom();
 
     // 随机密码生成器
-    public String generateRandomPassword() throws NoSuchAlgorithmException
+    public String generateRandomPassword()
     {
         return this.secureRandom.ints(10)
                                 .mapToObj((int i) ->
