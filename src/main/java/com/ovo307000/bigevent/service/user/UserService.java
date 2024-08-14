@@ -78,22 +78,29 @@ public class UserService
                        .isPresent();
     }
 
+    /**
+     * 用户登录方法
+     *
+     * @param user 需要登录的用户信息，不能为空
+     *
+     * @return 返回登录状态，可能的状态包括成功、密码错误和用户已存在
+     * <p>
+     * 说明：
+     * 1. 本方法首先尝试根据用户名查找数据库中的用户信息
+     * 2. 如果找到用户信息，则检查传入的用户密码是否正确
+     * 3. 如果密码正确，返回登录成功状态；否则返回密码错误状态
+     * 4. 如果没有找到用户信息，则返回用户已存在状态
+     */
     public Status login(@NotNull UserDTO user)
     {
+        // 尝试查找数据库中与提供的用户名匹配的用户信息
         return Optional.ofNullable(this.userRepository.findUsersByUsername(user.getUsername()))
                        // 使用 Map 做映射，将结果映射到 UserStatus 中并返回
-                       .map((UserDTO userInDatabase) ->
-                            {
-                                if (this.isPasswordCorrect(user, userInDatabase))
-                                {
-                                    return UserStatus.SUCCESS;
-                                }
-                                else
-                                {
-                                    return UserStatus.PASSWORD_CORRECT;
-                                }
-                            })
-                       .orElse(UserStatus.USER_ALREADY_EXISTS);
+                       .map((UserDTO userInDatabase) -> this.isPasswordCorrect(user, userInDatabase)
+                                                        ? UserStatus.SUCCESS
+                                                        : UserStatus.PASSWORD_MISMATCH)
+                       // 如果没有找到用户信息，则返回用户不存在状态
+                       .orElse(UserStatus.USER_NOT_EXISTS);
     }
 
     public boolean isPasswordCorrect(@NotNull UserDTO user, @NotNull UserDTO userInDatabase)
@@ -243,8 +250,9 @@ public class UserService
      * 从URL中获取文件类型
      *
      * @param url 文件的URL地址
-     * @return 文件类型字符串
      *
+     * @return 文件类型字符串
+     * <p>
      * 该方法通过分析URL的最后一点（'.'）来确定文件类型，即获取URL中最后一点（'.'）之后的所有字符作为文件类型
      * 如果URL格式不正确，即不包含'.'或以'.'结尾，则抛出IllegalArgumentException异常
      */
@@ -262,8 +270,6 @@ public class UserService
         // 返回URL中最后一点（'.'）之后的所有字符作为文件类型
         return url.substring(lastDotIndex + 1);
     }
-
-
 
     public @Nullable UserDTO findUserByThreadLocal()
     {
