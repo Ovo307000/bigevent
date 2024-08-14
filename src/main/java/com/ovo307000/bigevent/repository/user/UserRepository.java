@@ -25,19 +25,5 @@ public interface UserRepository extends JpaRepository<UserDTO, Integer>
 
     List<UserDTO> findUsersByUsernameAndPassword(@Param("username") String username,
                                                  @Param("password") String password);
-
-    @Modifying
-    @Transactional
-    @Query("""
-           update UserDTO as user
-           set user.nickname   = :#{#user.nickname},
-               user.password   = :#{#user.password},
-               user.email      = :#{#user.email},
-               user.updateTime = :#{#user.updateTime}
-           where user.id = :#{#id}
-           """)
-    int updateUserById(@Param("id") Long id, @Param("user") UserDTO user);
-
-    int updateUserDTOById(Long id, String avatarUrl);
 }
 
