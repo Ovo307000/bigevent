@@ -170,9 +170,12 @@ public class UserController
     @PatchMapping("/updatePwd")
     public Result<?> updatePassword(@RequestBody Map<String, Object> params) throws NoSuchAlgorithmException
     {
-        String repeatPassword = (String) Objects.requireNonNull(params.get("re_pwd"), "repeatPassword cannot be null");
-        String oldPassword    = (String) Objects.requireNonNull(params.get("old_pwd"), "oldPassword cannot be null");
-        String newPassword    = (String) Objects.requireNonNull(params.get("new_pwd"), "newPassword cannot be null");
+        String repeatPassword = (String) Objects.requireNonNull(params.get("re_pwd"),
+                                                                UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
+        String oldPassword    = (String) Objects.requireNonNull(params.get("old_pwd"),
+                                                                UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
+        String newPassword    = (String) Objects.requireNonNull(params.get("new_pwd"),
+                                                                UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
 
         if (! StringUtils.hasLength(repeatPassword) ||
             ! StringUtils.hasLength(oldPassword) ||
