@@ -64,6 +64,9 @@ public class LoginInterceptor implements HandlerInterceptor
         {
             // 验证并解析令牌，如果成功，将claims（载荷）信息保存到线程局部变量中，以供后续使用
             final Claims claims = this.jwtUtil.verifyAndParseToken(requestHeader);
+
+            log.debug("Verify and parse JWT token successfully, claims: {}", claims);
+
             this.threadLocalUtil.set(claims);
 
             // 设置响应状态码为200，表示请求有效，放行
@@ -74,6 +77,8 @@ public class LoginInterceptor implements HandlerInterceptor
         // 如果解析令牌失败，则捕获JwtException异常
         catch (JwtException jwtException)
         {
+            log.error("Verify and parse JWT token failed, error: {}", jwtException.getMessage());
+
             // 设置响应状态码为401，表示请求无效（令牌无效），拦截
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
