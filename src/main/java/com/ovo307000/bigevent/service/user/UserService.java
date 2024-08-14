@@ -239,16 +239,30 @@ public class UserService
     }
 
 
+    /**
+     * 从URL中获取文件类型
+     *
+     * @param url 文件的URL地址
+     * @return 文件类型字符串
+     *
+     * 该方法通过分析URL的最后一点（'.'）来确定文件类型，即获取URL中最后一点（'.'）之后的所有字符作为文件类型
+     * 如果URL格式不正确，即不包含'.'或以'.'结尾，则抛出IllegalArgumentException异常
+     */
     private String getFileTypeFromUrl(String url)
     {
-        // 获取文件类型
+        // 查找URL中最后一点（'.'）的位置
         int lastDotIndex = url.lastIndexOf('.');
+
+        // 如果URL中没有'.'或以'.'结尾，则视为无效URL格式，抛出异常
         if (lastDotIndex < 0 || lastDotIndex == url.length() - 1)
         {
             throw new IllegalArgumentException("Invalid URL format for determining file type");
         }
+
+        // 返回URL中最后一点（'.'）之后的所有字符作为文件类型
         return url.substring(lastDotIndex + 1);
     }
+
 
 
     public @Nullable UserDTO findUserByThreadLocal()
