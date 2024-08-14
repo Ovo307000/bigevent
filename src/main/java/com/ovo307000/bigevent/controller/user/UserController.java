@@ -155,4 +155,21 @@ public class UserController
                        .map(Result::success)
                        .orElse(Result.fail(UserStatus.FAILED.getMessage(), null));
     }
+
+    @PatchMapping("/updateAvatar")
+    public Result<?> updateAvatar(@RequestParam String avatarUrl)
+    {
+        return Optional.ofNullable(this.userService.updateAvatar(avatarUrl))
+                       .map(Result::success)
+                       .orElse(Result.fail(UserStatus.FAILED.getMessage(), null));
+    }
+
+    @PatchMapping("/updatePassword")
+    public Result<?> updatePassword(String newPassword, String oldPassword, String repeatPassword)
+            throws NoSuchAlgorithmException
+    {
+        return Optional.ofNullable(this.userService.updateUserPassword(newPassword, oldPassword, repeatPassword))
+                       .map(Result::success)
+                       .orElse(Result.fail(UserStatus.FAILED.getMessage(), null));
+    }
 }

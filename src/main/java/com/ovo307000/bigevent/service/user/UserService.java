@@ -3,6 +3,7 @@ package com.ovo307000.bigevent.service.user;
 import com.ovo307000.bigevent.core.constants.enumeration.status.Status;
 import com.ovo307000.bigevent.core.constants.enumeration.status.UserStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
+import com.ovo307000.bigevent.core.security.generater.DefaultValueGenerator;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
 import com.ovo307000.bigevent.core.utils.ThreadLocalUtil;
 import com.ovo307000.bigevent.entity.dto.UserDTO;
@@ -31,15 +32,18 @@ public class UserService
     private final UserRepository          userRepository;
     private final ThreadLocalUtil<Claims> threadLocalUtil;
     private final JWTUtil                 jwtUtil;
+    private final DefaultValueGenerator   defaultValueGenerator;
 
     @Autowired
     public UserService(@Qualifier("userUserRepository") UserRepository userRepository,
                        ThreadLocalUtil<Claims> threadLocalUtil,
-                       JWTUtil jwtUtil)
+                       JWTUtil jwtUtil,
+                       DefaultValueGenerator defaultValueGenerator)
     {
-        this.userRepository  = userRepository;
-        this.threadLocalUtil = threadLocalUtil;
-        this.jwtUtil         = jwtUtil;
+        this.userRepository        = userRepository;
+        this.threadLocalUtil       = threadLocalUtil;
+        this.jwtUtil               = jwtUtil;
+        this.defaultValueGenerator = defaultValueGenerator;
     }
 
     public Status register(@NotNull UserDTO user) throws NoSuchAlgorithmException
@@ -166,16 +170,85 @@ public class UserService
             return null;
         }
 
-        UserDTO newUser = new UserDTO();
+        UserDTO newUser        = new UserDTO();
+        String  randomPassword = this.defaultValueGenerator.generateRandomPassword();
 
         BeanUtils.copyProperties(user, newUser);
+
+        log.debug("Updating user: {}", newUser);
 
         newUser.setUpdateTime(LocalDateTime.now());
         newUser.setCreateTime(Optional.ofNullable(newUser.getCreateTime())
                                       .orElse(LocalDateTime.now()));
         newUser.setPassword(SHA256Encrypted.encrypt(Optional.ofNullable(user.getPassword())
-                                                            .orElse("123456")));
+                                                            .orElse(randomPassword)));
 
         return this.userRepository.save(newUser);
+    }
+
+    public UserDTO updateAvatar(String avatarUrl)
+    {
+        UserDTO newUser = Objects.requireNonNull(this.findUserByThreadLocal(), "User not found");
+
+        newUser.setUserPicture(avatarUrl);
+        newUser.setUpdateTime(LocalDateTime.now());
+
+        return this.userRepository.save(newUser);
+    }
+
+    public UserDTO findUserByThreadLocal()
+    {
+        Long id = Objects.requireNonNull(this.threadLocalUtil.getAndRemove()
+                                                             .get("id", Long.class),
+                                         "Failed to get user id from ThreadLocal");
+
+        return this.userRepository.findUsersById(id);
+    }
+
+    /**
+     * 更新用户密码
+     *
+     * @param newPassword    新密码
+     * @param oldPassword    旧密码
+     * @param repeatPassword 重复的新密码
+     *
+     * @return 更新后的用户信息
+     *
+     * @throws NoSuchAlgorithmException 加密算法异常
+     *                                  <p>
+     *                                  该方法用于更新当前用户的密码。首先验证新密码和重复密码是否一致，
+     *                                  然后从线程本地获取当前用户信息，并对旧密码进行加密后与数据库中存储的密码比对。
+     *                                  如果旧密码正确，则对新密码进行加密后更新至用户信息，并记录更新时间。
+     *                                  最后保存更新后的用户信息至数据库，并返回更新后的用户信息对象。
+     */
+    public UserDTO updateUserPassword(String newPassword, String oldPassword, String repeatPassword)
+            throws NoSuchAlgorithmException
+    {
+        // 检查新密码和重复密码是否一致
+        if (! Objects.equals(newPassword, repeatPassword))
+        {
+            throw new IllegalArgumentException("The new password and repeat password are not equal");
+        }
+
+        // 从线程本地获取当前用户信息
+        UserDTO userByThreadLocal = this.findUserByThreadLocal();
+        // 对旧密码进行加密
+        String encryptedOldPassword = SHA256Encrypted.encrypt(oldPassword);
+
+        // 验证加密后的旧密码是否与数据库中存储的密码一致
+        if (! Objects.equals(encryptedOldPassword, userByThreadLocal.getPassword()))
+        {
+            throw new IllegalArgumentException("The old password is incorrect");
+        }
+
+        // 对新密码进行加密
+        String encryptedNewPassword = SHA256Encrypted.encrypt(newPassword);
+
+        // 更新用户密码和更新时间
+        userByThreadLocal.setPassword(encryptedNewPassword);
+        userByThreadLocal.setUpdateTime(LocalDateTime.now());
+
+        // 保存更新后的用户信息至数据库，并返回
+        return this.userRepository.save(userByThreadLocal);
     }
 }
