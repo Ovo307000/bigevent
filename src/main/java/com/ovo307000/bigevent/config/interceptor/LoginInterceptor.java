@@ -69,12 +69,10 @@ public class LoginInterceptor implements HandlerInterceptor
         {
             // 记录日志，表示令牌验证和解析失败
             log.error("Verify and parse JWT token failed, error: {}", jwtException.getMessage());
-
             // 设置响应状态码为401，表示请求无效（令牌无效），拦截
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-            // 返回false，拦截请求
-            return false;
+            throw new JwtException("Verify and parse JWT token failed, error: " + jwtException.getMessage());
         }
     }
 
