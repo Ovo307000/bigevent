@@ -41,7 +41,9 @@ public class CategoryController
     {
         log.info("Listing categories...");
 
-        return Result.success(this.userCategoryService.list());
+        return Optional.ofNullable(this.userCategoryService.list())
+                       .map(Result::success)
+                       .orElse(Result.fail(CategoryStatus.FAILED, null));
     }
 
     @GetMapping("/category/detail")
