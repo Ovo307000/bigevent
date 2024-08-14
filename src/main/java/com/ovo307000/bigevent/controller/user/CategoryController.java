@@ -25,7 +25,7 @@ public class CategoryController
         this.userCategoryService = userCategoryService;
     }
 
-    @PostMapping()
+    @PostMapping("/category")
     public Result<?> add(@RequestBody CategoryDTO categoryDTO)
     {
         log.info("Adding category: {}", categoryDTO);
