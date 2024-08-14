@@ -62,18 +62,6 @@ public class JWTUtil
                    .getPayload();
     }
 
-    public String generateTokenByUsernameAndPasswordFromThreadLocal() throws NoSuchAlgorithmException
-    {
-        Claims claims = Objects.requireNonNull(this.threadLocalUtil.get(), "Failed to get claims from thread local");
-
-        String username = Objects.requireNonNull(claims.get("username", String.class),
-                                                 "Failed to get username from claims");
-        String password = SHA256Encrypted.encrypt(Objects.requireNonNull(claims.get("password", String.class),
-                                                                         "Failed to get password from claims"));
-
-        return this.generateToken(Map.of("username", username, "password", password));
-    }
-
     public String generateToken(Map<String, Object> claims)
     {
         return Jwts.builder()
