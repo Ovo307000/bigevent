@@ -5,12 +5,10 @@ import com.ovo307000.bigevent.core.constants.enumeration.status.Status;
 import com.ovo307000.bigevent.core.constants.enumeration.status.UserStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.security.generater.DefaultValueGenerator;
-import com.ovo307000.bigevent.core.utils.JWTUtil;
 import com.ovo307000.bigevent.core.utils.ThreadLocalUtil;
 import com.ovo307000.bigevent.entity.dto.UserDTO;
 import com.ovo307000.bigevent.repository.user.UserRepository;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,20 +31,17 @@ public class UserService
 
     private final UserRepository          userRepository;
     private final ThreadLocalUtil<Claims> threadLocalUtil;
-    private final JWTUtil                 jwtUtil;
     private final DefaultValueGenerator   defaultValueGenerator;
     private final RegisterProperties      registerProperties;
 
     @Autowired
     public UserService(@Qualifier("userUserRepository") UserRepository userRepository,
                        ThreadLocalUtil<Claims> threadLocalUtil,
-                       JWTUtil jwtUtil,
                        DefaultValueGenerator defaultValueGenerator,
                        RegisterProperties registerProperties)
     {
         this.userRepository        = userRepository;
         this.threadLocalUtil       = threadLocalUtil;
-        this.jwtUtil               = jwtUtil;
         this.defaultValueGenerator = defaultValueGenerator;
         this.registerProperties    = registerProperties;
     }
@@ -153,26 +148,6 @@ public class UserService
 
         return this.userRepository.findUsersByUsernameAndPassword(username, password)
                                   .getFirst();
-    }
-
-    public UserDTO queryCurrentUserInfo(String token)
-    {
-        Claims claims;
-
-        try
-        {
-            claims = this.jwtUtil.verifyAndParseToken(token);
-
-            String username = claims.get("username", String.class);
-            String password = claims.get("password", String.class);
-
-            return this.userRepository.findUsersByUsernameAndPassword(username, password)
-                                      .getFirst();
-        }
-        catch (JwtException jwtException)
-        {
-            throw new JwtException("Token verification failed: " + jwtException.getMessage());
-        }
     }
 
     public UserDTO update(UserDTO user) throws NoSuchAlgorithmException
@@ -306,7 +281,8 @@ public class UserService
         }
 
         // 从线程本地获取当前用户信息
-        UserDTO userByThreadLocal = this.findUserByThreadLocal();
+        UserDTO userByThreadLocal = Objects.requireNonNull(this.findUserByThreadLocal(),
+                                                           "Failed to get user from ThreadLocal");
         // 对旧密码进行加密
         String encryptedOldPassword = SHA256Encrypted.encrypt(oldPassword);
 

@@ -1,5 +1,6 @@
 package com.ovo307000.bigevent.controller.user;
 
+import com.ovo307000.bigevent.core.constants.enumeration.status.Status;
 import com.ovo307000.bigevent.core.constants.enumeration.status.UserStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
@@ -61,7 +62,7 @@ public class UserController
     }
 
     @PostMapping("/login")
-    public Result<?> login(@NotNull String username, @NotNull String password) throws NoSuchAlgorithmException
+    public Result<String> login(@NotNull String username, @NotNull String password) throws NoSuchAlgorithmException
     {
         log.info("Trying to login user: {}", username);
 
@@ -75,15 +76,15 @@ public class UserController
         return switch (this.userService.login(new UserDTO(username, password)))
         {
             case UserStatus.SUCCESS -> Result.success(UserStatus.SUCCESS.getMessage(), token);
-            case UserStatus.PASSWORD_MISMATCH -> Result.fail(UserStatus.PASSWORD_MISMATCH.getMessage());
-            case UserStatus.USER_NOT_EXISTS -> Result.fail(UserStatus.USER_NOT_EXISTS.getMessage());
+            case UserStatus.PASSWORD_MISMATCH -> Result.fail(UserStatus.PASSWORD_MISMATCH.getMessage(), null);
+            case UserStatus.USER_NOT_EXISTS -> Result.fail(UserStatus.USER_NOT_EXISTS.getMessage(), null);
 
-            default -> Result.fail(UserStatus.FAILED.getMessage());
+            default -> Result.fail(UserStatus.FAILED.getMessage(), null);
         };
     }
 
     @GetMapping("/findUserByNickname")
-    public Result<?> findUserByNickname(@NotNull String nickname)
+    public Result<List<UserDTO>> findUserByNickname(@NotNull String nickname)
     {
         log.info("Finding user by nickname: {}", nickname);
 
@@ -94,7 +95,7 @@ public class UserController
     }
 
     @GetMapping("/findUserByUsernameLikeIgnoreCase")
-    public Result<?> findUserByUsernameLikeIgnoreCase(@NotNull String username)
+    public Result<List<UserDTO>> findUserByUsernameLikeIgnoreCase(@NotNull String username)
     {
         log.info("Finding user by username like: {}", username);
 
@@ -105,7 +106,7 @@ public class UserController
     }
 
     @GetMapping("/findUserByNicknameLikeIgnoreCase")
-    public Result<?> findUserByNicknameLikeIgnoreCase(@NotNull String nickname)
+    public Result<List<UserDTO>> findUserByNicknameLikeIgnoreCase(@NotNull String nickname)
     {
         log.info("Finding user by nickname like: {}", nickname);
 
@@ -116,7 +117,7 @@ public class UserController
     }
 
     @GetMapping("/findUserByUsername")
-    public Result<?> findUserByUsername(@NotNull String username)
+    public Result<UserDTO> findUserByUsername(@NotNull String username)
     {
         log.info("Finding user by username: {}", username);
 
@@ -137,7 +138,7 @@ public class UserController
     }
 
     @PutMapping("/update")
-    public Result<?> update(@RequestBody UserDTO user) throws NoSuchAlgorithmException
+    public Result<UserDTO> update(@RequestBody UserDTO user) throws NoSuchAlgorithmException
     {
         return Optional.ofNullable(this.userService.update(user))
                        .map(Result::success)
@@ -145,7 +146,7 @@ public class UserController
     }
 
     @PatchMapping("/updateAvatar")
-    public Result<?> updateAvatar(@RequestParam String avatarUrl)
+    public Result<UserDTO> updateAvatar(@RequestParam String avatarUrl)
     {
         return Optional.ofNullable(this.userService.updateAvatar(avatarUrl))
                        .map(Result::success)
@@ -153,7 +154,7 @@ public class UserController
     }
 
     @PatchMapping("/updatePwd")
-    public Result<?> updatePassword(@RequestBody Map<String, Object> params) throws NoSuchAlgorithmException
+    public Result<UserDTO> updatePassword(@RequestBody Map<String, Object> params) throws NoSuchAlgorithmException
     {
         String repeatPassword = (String) Objects.requireNonNull(params.get("re_pwd"),
                                                                 UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());

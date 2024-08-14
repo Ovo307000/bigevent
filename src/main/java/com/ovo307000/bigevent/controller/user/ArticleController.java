@@ -5,6 +5,7 @@ import com.ovo307000.bigevent.entity.dto.ArticleDTO;
 import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.user.ArticleService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,14 @@ public class ArticleController
     {
         return Optional.ofNullable(this.articleService.list())
                        .filter((List<ArticleDTO> articles) -> ! articles.isEmpty())
+                       .map(Result::success)
+                       .orElse(Result.fail(ArticleAStatus.ARTICLE_NOT_FOUND.getMessage(), null));
+    }
+
+    @PostMapping("category")
+    public Result<?> category()
+    {
+        return Optional.ofNullable(this.articleService.category())
                        .map(Result::success)
                        .orElse(Result.fail(ArticleAStatus.ARTICLE_NOT_FOUND.getMessage(), null));
     }
