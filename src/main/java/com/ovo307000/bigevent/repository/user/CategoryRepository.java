@@ -13,4 +13,6 @@ public interface CategoryRepository extends JpaRepository<CategoryDTO, Integer>
     List<CategoryDTO> findCategoryDTOByCreateUser(UserDTO userDTO);
 
     CategoryDTO findCategoryDTOById(Long id);
+
+    Integer updateCategoryDTOById(CategoryDTO categoryDTO, Long categoryId);
 }

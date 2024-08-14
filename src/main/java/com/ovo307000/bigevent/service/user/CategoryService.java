@@ -59,4 +59,28 @@ public class CategoryService
 
         return this.userCategoryRepository.findCategoryDTOById(id);
     }
+
+    /**
+     * 更新类别信息
+     * <p>
+     * 此方法主要用于更新数据库中的类别信息它首先确保传入的类别对象的ID不为null，
+     * 然后设置类别的更新时间为当前时间，最后尝试将更新后的类别对象保存回数据库
+     *
+     * @param categoryDTO 待更新的类别数据传输对象它包含了类别信息，如名称、描述等
+     *
+     * @return 返回更新操作的状态，成功或失败这通过CategoryStatus枚举表示
+     */
+    public String update(CategoryDTO categoryDTO)
+    {
+        // 设置更新时间为当前时间，以记录最新的修改时间点
+        categoryDTO.setUpdateTime(LocalDateTime.now());
+
+        // 确保类别ID不为空，这是进行数据库操作的必要条件
+        Long id = Objects.requireNonNull(categoryDTO.getId(), "category id can not be null");
+
+        // 尝试更新数据库中的类别信息，根据影响的行数判断操作是否成功
+        return this.userCategoryRepository.updateCategoryDTOById(categoryDTO, id) > 0
+               ? CategoryStatus.SUCCESS
+               : CategoryStatus.FAILED;
+    }
 }
