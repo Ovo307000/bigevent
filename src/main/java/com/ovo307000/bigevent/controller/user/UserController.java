@@ -64,7 +64,7 @@ public class UserController
     {
         log.info("Trying to login user: {}", username);
 
-        String token = this.jwtUtil.generateTokenByUsernameAndPasswordFromThreadLocal();
+        String token = this.jwtUtil.generateTokenByUsernameAndPassword(username, password);
 
         log.debug("Token generated: {}", token);
 

@@ -86,4 +86,11 @@ public class JWTUtil
                            .toString())
                    .compact();
     }
+
+    public String generateTokenByUsernameAndPassword(String username, String password) throws NoSuchAlgorithmException
+    {
+        String encryptedPassword = SHA256Encrypted.encrypt(password);
+
+        return this.generateToken(Map.of("username", username, "password", encryptedPassword));
+    }
 }
