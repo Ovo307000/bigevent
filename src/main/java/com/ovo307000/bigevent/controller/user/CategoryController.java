@@ -7,11 +7,9 @@ import com.ovo307000.bigevent.service.user.CategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Validated
@@ -35,5 +33,13 @@ public class CategoryController
         return Objects.equals(this.userCategoryService.add(categoryDTO), CategoryStatus.SUCCESS)
                ? Result.success()
                : Result.fail();
+    }
+
+    @GetMapping("/category/list")
+    public Result<List<CategoryDTO>> list()
+    {
+        log.info("Listing categories...");
+
+        return Result.success(this.userCategoryService.list());
     }
 }

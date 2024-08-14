@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,5 +40,12 @@ public class CategoryService
         return Optional.of(this.userCategoryRepository.save(categoryDTO))
                        .map((CategoryDTO category) -> CategoryStatus.SUCCESS)
                        .orElse(CategoryStatus.FAILED);
+    }
+
+    public List<CategoryDTO> list()
+    {
+        UserDTO user = Objects.requireNonNull(this.userUserService.findUserByThreadLocal(), "user not found");
+
+        return this.userCategoryRepository.findCategoryDTOByCreateUser(user);
     }
 }
