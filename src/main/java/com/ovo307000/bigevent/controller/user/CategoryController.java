@@ -4,6 +4,7 @@ import com.ovo307000.bigevent.core.constants.enumeration.status.CategoryStatus;
 import com.ovo307000.bigevent.entity.dto.CategoryDTO;
 import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.user.CategoryService;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +28,7 @@ public class CategoryController
     }
 
     @PostMapping("/category")
-    public Result<?> add(@RequestBody @Validated CategoryDTO categoryDTO)
+    public Result<?> add(@RequestBody @Validated @NotNull CategoryDTO categoryDTO)
     {
         log.info("Adding category: {}", categoryDTO);
 
@@ -47,7 +48,7 @@ public class CategoryController
     }
 
     @GetMapping("/category/detail")
-    public Result<CategoryDTO> detail(@RequestParam Long id)
+    public Result<CategoryDTO> detail(@RequestParam @NotNull(message = "category id can not be null") Long id)
     {
         log.info("Listing category: {}", id);
 

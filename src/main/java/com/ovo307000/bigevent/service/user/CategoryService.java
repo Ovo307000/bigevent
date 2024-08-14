@@ -52,7 +52,10 @@ public class CategoryService
 
     public @Nullable CategoryDTO findCategoryById(Long id)
     {
-        Objects.requireNonNull(id, "id cannot be null");
+        if (id < 0)
+        {
+            throw new IllegalArgumentException("category id must be greater than 0");
+        }
 
         return this.userCategoryRepository.findCategoryDTOById(id);
     }
