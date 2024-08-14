@@ -164,7 +164,7 @@ public class UserController
                        .orElse(Result.fail(UserStatus.FAILED.getMessage(), null));
     }
 
-    @PatchMapping("/updatePassword")
+    @PatchMapping("/updatePwd")
     public Result<?> updatePassword(String newPassword, String oldPassword, String repeatPassword)
             throws NoSuchAlgorithmException
     {
