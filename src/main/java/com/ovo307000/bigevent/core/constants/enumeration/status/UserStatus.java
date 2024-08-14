@@ -20,6 +20,7 @@ public enum UserStatus implements Status
     PASSWORD_TOO_WEAK(1023, "Password is too weak"),
     PASSWORD_MISMATCH(1024, "Password does not match"),
     PASSWORD_CORRECT(1025, "Password is correct"),
+    PASSWORD_CANNOT_BE_EMPTY(1026, "Password cannot be empty"),
 
     // Email related
     EMAIL_INVALID(1030, "Email is invalid"),

@@ -8,15 +8,18 @@ import com.ovo307000.bigevent.entity.dto.UserDTO;
 import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.user.UserService;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Validated
@@ -157,7 +160,7 @@ public class UserController
     }
 
     @PatchMapping("/updateAvatar")
-    public Result<?> updateAvatar(@RequestParam String avatarUrl)
+    public Result<?> updateAvatar(@RequestParam @URL String avatarUrl)
     {
         return Optional.ofNullable(this.userService.updateAvatar(avatarUrl))
                        .map(Result::success)
@@ -165,9 +168,19 @@ public class UserController
     }
 
     @PatchMapping("/updatePwd")
-    public Result<?> updatePassword(String newPassword, String oldPassword, String repeatPassword)
-            throws NoSuchAlgorithmException
+    public Result<?> updatePassword(@RequestBody Map<String, Object> params) throws NoSuchAlgorithmException
     {
+        String repeatPassword = (String) Objects.requireNonNull(params.get("re_pwd"), "repeatPassword cannot be null");
+        String oldPassword    = (String) Objects.requireNonNull(params.get("old_pwd"), "oldPassword cannot be null");
+        String newPassword    = (String) Objects.requireNonNull(params.get("new_pwd"), "newPassword cannot be null");
+
+        if (! StringUtils.hasLength(repeatPassword) ||
+            ! StringUtils.hasLength(oldPassword) ||
+            ! StringUtils.hasLength(newPassword))
+        {
+            return Result.fail(UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage(), null);
+        }
+
         return Optional.ofNullable(this.userService.updateUserPassword(newPassword, oldPassword, repeatPassword))
                        .map(Result::success)
                        .orElse(Result.fail(UserStatus.FAILED.getMessage(), null));
