@@ -1,6 +1,5 @@
 package com.ovo307000.bigevent.controller.user;
 
-import com.ovo307000.bigevent.config.properties.InterceptorProperties;
 import com.ovo307000.bigevent.core.constants.enumeration.status.UserStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
@@ -29,17 +28,13 @@ public class UserController
 {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private final UserService           userService;
-    private final JWTUtil               jwtUtil;
-    private final InterceptorProperties interceptorProperties;
+    private final UserService userService;
+    private final JWTUtil     jwtUtil;
 
-    public UserController(@Qualifier(value = "userUserService") UserService userService,
-                          JWTUtil jwtUtil,
-                          InterceptorProperties interceptorProperties)
+    public UserController(@Qualifier(value = "userUserService") UserService userService, JWTUtil jwtUtil)
     {
-        this.userService           = userService;
-        this.jwtUtil               = jwtUtil;
-        this.interceptorProperties = interceptorProperties;
+        this.userService = userService;
+        this.jwtUtil     = jwtUtil;
     }
 
     /**
@@ -137,18 +132,9 @@ public class UserController
     {
         log.info("Getting user info by token: {}", token);
 
-        if (this.interceptorProperties.isEnable())
-        {
-            return Optional.ofNullable(this.userService.queryCurrentUserInfo())
-                           .map(Result::success)
-                           .orElse(Result.fail(UserStatus.USER_NOT_EXISTS.getMessage(), null));
-        }
-        else
-        {
-            return Optional.ofNullable(this.userService.queryCurrentUserInfo(token))
-                           .map(Result::success)
-                           .orElse(Result.fail(UserStatus.USER_NOT_EXISTS.getMessage(), null));
-        }
+        return Optional.ofNullable(this.userService.queryCurrentUserInfo())
+                       .map(Result::success)
+                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS.getMessage(), null));
     }
 
     @PutMapping("/update")
@@ -172,10 +158,10 @@ public class UserController
     {
         String repeatPassword = (String) Objects.requireNonNull(params.get("re_pwd"),
                                                                 UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
-        String oldPassword    = (String) Objects.requireNonNull(params.get("old_pwd"),
-                                                                UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
-        String newPassword    = (String) Objects.requireNonNull(params.get("new_pwd"),
-                                                                UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
+        String oldPassword = (String) Objects.requireNonNull(params.get("old_pwd"),
+                                                             UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
+        String newPassword = (String) Objects.requireNonNull(params.get("new_pwd"),
+                                                             UserStatus.PASSWORD_CANNOT_BE_EMPTY.getMessage());
 
         if (! StringUtils.hasLength(repeatPassword) ||
             ! StringUtils.hasLength(oldPassword) ||

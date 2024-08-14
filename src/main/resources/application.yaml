@@ -28,7 +28,6 @@ bigevent:
     expiration-of-seconds    : 604800
 
   interceptor:
-    enable               : false
     exclude-path-patterns: [ /user/login, /user/register ]
 
   user       :

@@ -1,6 +1,5 @@
 package com.ovo307000.bigevent.config.interceptor;
 
-import com.ovo307000.bigevent.config.properties.InterceptorProperties;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
 import com.ovo307000.bigevent.core.utils.ThreadLocalUtil;
 import io.jsonwebtoken.Claims;
@@ -21,16 +20,12 @@ public class LoginInterceptor implements HandlerInterceptor
 {
     private static final Logger                  log = LoggerFactory.getLogger(LoginInterceptor.class);
     private final        JWTUtil                 jwtUtil;
-    private final        InterceptorProperties   interceptorProperties;
     private final        ThreadLocalUtil<Claims> threadLocalUtil;
 
-    public LoginInterceptor(JWTUtil jwtUtil,
-                            InterceptorProperties interceptorProperties,
-                            ThreadLocalUtil<Claims> threadLocalUtil)
+    public LoginInterceptor(JWTUtil jwtUtil, ThreadLocalUtil<Claims> threadLocalUtil)
     {
-        this.jwtUtil               = jwtUtil;
-        this.interceptorProperties = interceptorProperties;
-        this.threadLocalUtil       = threadLocalUtil;
+        this.jwtUtil         = jwtUtil;
+        this.threadLocalUtil = threadLocalUtil;
     }
 
     /**
@@ -49,14 +44,7 @@ public class LoginInterceptor implements HandlerInterceptor
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) throws JwtException
     {
-        // 检查配置，如果拦截器未启用，则直接放行
-        if (! this.interceptorProperties.isEnable())
-        {
-            response.setStatus(HttpServletResponse.SC_OK);
-            return true;
-        }
-
-        // 获取请求头中的Authorization信息，这是存放JWT令牌的地方
+        // 获取请求头中的Authorization信息，这是JWT令牌所在的位置
         String requestHeader = Objects.requireNonNull(request.getHeader("Authorization"), "Authorization is null");
 
         // 尝试验证和解析JWT令牌
@@ -65,23 +53,27 @@ public class LoginInterceptor implements HandlerInterceptor
             // 验证并解析令牌，如果成功，将claims（载荷）信息保存到线程局部变量中，以供后续使用
             final Claims claims = this.jwtUtil.verifyAndParseToken(requestHeader);
 
+            // 记录日志，表示令牌验证和解析成功
             log.debug("Verify and parse JWT token successfully, claims: {}", claims);
 
+            // 将解析后的claims信息存入线程局部变量，供后续操作使用
             this.threadLocalUtil.set(claims);
-
-            // 设置响应状态码为200，表示请求有效，放行
+            // 设置响应状态码为200，表示请求有效
             response.setStatus(HttpServletResponse.SC_OK);
 
+            // 返回true，放行请求
             return true;
         }
         // 如果解析令牌失败，则捕获JwtException异常
         catch (JwtException jwtException)
         {
+            // 记录日志，表示令牌验证和解析失败
             log.error("Verify and parse JWT token failed, error: {}", jwtException.getMessage());
 
             // 设置响应状态码为401，表示请求无效（令牌无效），拦截
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
+            // 返回false，拦截请求
             return false;
         }
     }
