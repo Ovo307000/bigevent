@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
 
-@RequestMapping("/category")
+@RequestMapping("/user")
 @RestController("userCategoryController")
 public class CategoryController
 {
