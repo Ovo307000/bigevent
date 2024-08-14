@@ -1,6 +1,7 @@
 package com.ovo307000.bigevent.entity.dto;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -14,9 +15,11 @@ public class CategoryDTO
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String categoryName;
 
+    @NotEmpty
     @Column(nullable = false, length = 32)
     private String categoryAlias;
 

@@ -6,6 +6,7 @@ import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.user.CategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,7 @@ public class CategoryController
     }
 
     @PostMapping("/category")
-    public Result<?> add(@RequestBody CategoryDTO categoryDTO)
+    public Result<?> add(@RequestBody @Validated CategoryDTO categoryDTO)
     {
         log.info("Adding category: {}", categoryDTO);
 
