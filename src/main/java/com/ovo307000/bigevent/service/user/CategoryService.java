@@ -6,6 +6,7 @@ import com.ovo307000.bigevent.entity.dto.UserDTO;
 import com.ovo307000.bigevent.repository.user.CategoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -47,5 +48,12 @@ public class CategoryService
         UserDTO user = Objects.requireNonNull(this.userUserService.findUserByThreadLocal(), "user not found");
 
         return this.userCategoryRepository.findCategoryDTOByCreateUser(user);
+    }
+
+    public @Nullable CategoryDTO findCategoryById(Long id)
+    {
+        Objects.requireNonNull(id, "id cannot be null");
+
+        return this.userCategoryRepository.findCategoryDTOById(id);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Validated
 @RequestMapping("/user")
@@ -41,5 +42,15 @@ public class CategoryController
         log.info("Listing categories...");
 
         return Result.success(this.userCategoryService.list());
+    }
+
+    @GetMapping("/category/detail")
+    public Result<CategoryDTO> detail(@RequestParam Long id)
+    {
+        log.info("Listing category: {}", id);
+
+        return Optional.ofNullable(this.userCategoryService.findCategoryById(id))
+                       .map(Result::success)
+                       .orElse(Result.fail(CategoryStatus.FAILED, null));
     }
 }

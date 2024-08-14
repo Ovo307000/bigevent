@@ -11,4 +11,6 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<CategoryDTO, Integer>
 {
     List<CategoryDTO> findCategoryDTOByCreateUser(UserDTO userDTO);
+
+    CategoryDTO findCategoryDTOById(Long id);
 }
