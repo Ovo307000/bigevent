@@ -37,5 +37,7 @@ public interface UserRepository extends JpaRepository<UserDTO, Integer>
            where user.id = :#{#id}
            """)
     int updateUserById(@Param("id") Long id, @Param("user") UserDTO user);
+
+    int updateUserDTOById(Long id, String avatarUrl);
 }
 
