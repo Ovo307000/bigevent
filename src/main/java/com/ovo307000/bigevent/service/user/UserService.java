@@ -1,5 +1,6 @@
 package com.ovo307000.bigevent.service.user;
 
+import com.ovo307000.bigevent.config.properties.RegisterProperties;
 import com.ovo307000.bigevent.core.constants.enumeration.status.Status;
 import com.ovo307000.bigevent.core.constants.enumeration.status.UserStatus;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -33,17 +35,20 @@ public class UserService
     private final ThreadLocalUtil<Claims> threadLocalUtil;
     private final JWTUtil                 jwtUtil;
     private final DefaultValueGenerator   defaultValueGenerator;
+    private final RegisterProperties      registerProperties;
 
     @Autowired
     public UserService(@Qualifier("userUserRepository") UserRepository userRepository,
                        ThreadLocalUtil<Claims> threadLocalUtil,
                        JWTUtil jwtUtil,
-                       DefaultValueGenerator defaultValueGenerator)
+                       DefaultValueGenerator defaultValueGenerator,
+                       RegisterProperties registerProperties)
     {
         this.userRepository        = userRepository;
         this.threadLocalUtil       = threadLocalUtil;
         this.jwtUtil               = jwtUtil;
         this.defaultValueGenerator = defaultValueGenerator;
+        this.registerProperties    = registerProperties;
     }
 
     public Status register(@NotNull UserDTO user) throws NoSuchAlgorithmException
@@ -188,15 +193,65 @@ public class UserService
 
     public UserDTO updateAvatar(String avatarUrl)
     {
+        // 验证头像URL格式是否正确
+        if (! this.isValidUrl(avatarUrl))
+        {
+            throw new IllegalArgumentException("The avatar url is not valid");
+        }
+
+        // 检查文件类型是否支持
+        String fileType = this.getFileTypeFromUrl(avatarUrl);
+        if (! this.registerProperties.getEmailFormats()
+                                     .contains(fileType))
+        {
+            throw new IllegalArgumentException("The file type is not supported");
+        }
+
+        // 确保当前用户存在
         UserDTO newUser = Objects.requireNonNull(this.findUserByThreadLocal(), "User not found");
 
+        // 更新用户的头像URL和最后更新时间
         newUser.setUserPicture(avatarUrl);
         newUser.setUpdateTime(LocalDateTime.now());
 
+        // 保存更改到数据库
         return this.userRepository.save(newUser);
     }
 
-    public UserDTO findUserByThreadLocal()
+    /**
+     * 验证字符串是否为合法的URL
+     *
+     * @param url 待验证的URL字符串
+     *
+     * @return 如果URL合法则返回true，否则返回false
+     * 此方法使用正则表达式来验证URL，支持http和https协议
+     * 它检查URL是否以http或https开头，后面跟着一个或多个由点号连接的字母数字组合
+     * URL的路径部分是可选的，如果存在，将进行一定程度的格式检查
+     * <p>
+     * 注意：这个正则表达式可能无法覆盖所有合法的URL情况，但它在大多数常见情况下有效
+     */
+    private boolean isValidUrl(String url)
+    {
+        // 更严格的URL验证正则表达式
+        String regex = "^(http|https)://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)+(/[a-zA-Z0-9.,@?^=%&amp;:~+#-]*[a-zA-Z0-9@?^=%&amp;~+#-])?$";
+
+        return url.matches(regex);
+    }
+
+
+    private String getFileTypeFromUrl(String url)
+    {
+        // 获取文件类型
+        int lastDotIndex = url.lastIndexOf('.');
+        if (lastDotIndex < 0 || lastDotIndex == url.length() - 1)
+        {
+            throw new IllegalArgumentException("Invalid URL format for determining file type");
+        }
+        return url.substring(lastDotIndex + 1);
+    }
+
+
+    public @Nullable UserDTO findUserByThreadLocal()
     {
         Long id = Objects.requireNonNull(this.threadLocalUtil.getAndRemove()
                                                              .get("id", Long.class),
@@ -237,7 +292,8 @@ public class UserService
 
         // 验证加密后的旧密码是否与数据库中存储的密码一致
         if (! Objects.equals(encryptedOldPassword,
-                             this.findUserById(userByThreadLocal.getId()).getPassword()))
+                             this.findUserById(userByThreadLocal.getId())
+                                 .getPassword()))
         {
             throw new IllegalArgumentException("The old password is incorrect");
         }
