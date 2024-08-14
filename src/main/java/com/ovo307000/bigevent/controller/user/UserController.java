@@ -1,7 +1,6 @@
 package com.ovo307000.bigevent.controller.user;
 
 import com.ovo307000.bigevent.core.constants.enumeration.status.UserStatus;
-import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import com.ovo307000.bigevent.core.utils.JWTUtil;
 import com.ovo307000.bigevent.entity.dto.UserDTO;
 import com.ovo307000.bigevent.response.Result;
@@ -65,10 +64,7 @@ public class UserController
     {
         log.info("Trying to login user: {}", username);
 
-        String token = this.jwtUtil.generateToken(Map.of("username",
-                                                         username,
-                                                         "password",
-                                                         SHA256Encrypted.encrypt(password)));
+        String token = this.jwtUtil.generateTokenByUsernameAndPasswordFromThreadLocal();
 
         log.debug("Token generated: {}", token);
 
@@ -131,7 +127,7 @@ public class UserController
     {
         log.info("Getting user info by token: {}", token);
 
-        return Optional.ofNullable(this.userService.queryCurrentUserInfo())
+        return Optional.ofNullable(this.userService.findUserByThreadLocal())
                        .map(Result::success)
                        .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
     }

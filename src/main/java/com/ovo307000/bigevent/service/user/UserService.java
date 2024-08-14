@@ -138,39 +138,47 @@ public class UserService
         return this.userRepository.findUsersByNicknameLikeIgnoreCase(nickname);
     }
 
-    public @Nullable UserDTO queryCurrentUserInfo()
-    {
-        Claims claims = this.threadLocalUtil.getAndRemove();
-
-        String username = claims.get("username", String.class);
-        String password = claims.get("password", String.class);
-
-        return this.userRepository.findUsersByUsernameAndPassword(username, password)
-                                  .getFirst();
-    }
-
+    /**
+     * 更新用户信息
+     *
+     * @param user 待更新的用户信息
+     *
+     * @return 更新后的用户信息，如果用户不存在，则返回null
+     *
+     * @throws NoSuchAlgorithmException 如果生成随机密码时发生错误
+     */
     public UserDTO update(UserDTO user) throws NoSuchAlgorithmException
     {
+        // 检查用户是否存在，如果不存在则返回null
         if (! this.isUserExists(user))
         {
             return null;
         }
 
-        UserDTO newUser        = new UserDTO();
-        String  randomPassword = this.defaultValueGenerator.generateRandomPassword();
+        // 创建一个新的UserDTO对象，以避免直接修改传入的对象
+        UserDTO newUser = new UserDTO();
+        // 生成一个随机密码，用于备用
+        String randomPassword = this.defaultValueGenerator.generateRandomPassword();
 
+        // 复制传入的user对象的属性到新创建的newUser对象
         BeanUtils.copyProperties(user, newUser);
 
+        // 记录debug级别的日志，指示正在更新的用户信息
         log.debug("Updating user: {}", newUser);
 
+        // 设置用户的更新时间为当前时间
         newUser.setUpdateTime(LocalDateTime.now());
+        // 如果用户对象中没有创建时间，则设置为当前时间
         newUser.setCreateTime(Optional.ofNullable(newUser.getCreateTime())
                                       .orElse(LocalDateTime.now()));
+        // 加密用户的密码，如果密码为空，则使用随机生成的密码
         newUser.setPassword(SHA256Encrypted.encrypt(Optional.ofNullable(user.getPassword())
                                                             .orElse(randomPassword)));
 
+        // 保存更新后的用户信息到数据库，并返回更新后的用户信息
         return this.userRepository.save(newUser);
     }
+
 
     public UserDTO updateAvatar(String avatarUrl)
     {
@@ -245,13 +253,25 @@ public class UserService
         return url.substring(lastDotIndex + 1);
     }
 
+    /**
+     * 根据ThreadLocal中的信息查找用户
+     * <p>
+     * 此方法通过检查ThreadLocal存储的Claims对象来获取用户名，
+     * 然后根据这个用户名从用户仓库中查找对应的用户数据
+     *
+     * @return UserDTO 根据ThreadLocal中用户名查找到的用户数据，如果未找到返回null
+     */
     public @Nullable UserDTO findUserByThreadLocal()
     {
-        Long id = Objects.requireNonNull(this.threadLocalUtil.getAndRemove()
-                                                             .get("id", Long.class),
-                                         "Failed to get user id from ThreadLocal");
+        // 从ThreadLocal中获取Claims对象，该对象包含用户信息
+        Claims claims = this.threadLocalUtil.get();
 
-        return this.userRepository.findUsersById(id);
+        // 从Claims对象中提取用户名，如果不存在则抛出异常
+        String username = Objects.requireNonNull(claims.get("username", String.class),
+                                                 "Failed to get username from claims");
+
+        // 根据提取的用户名查询用户数据
+        return this.userRepository.findUsersByUsername(username);
     }
 
     /**
