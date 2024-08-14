@@ -18,9 +18,11 @@ import java.util.Optional;
 @Component("loginInterceptor")
 public class LoginInterceptor implements HandlerInterceptor
 {
-    private static final Logger                  log = LoggerFactory.getLogger(LoginInterceptor.class);
-    private final        JWTUtil                 jwtUtil;
-    private final        ThreadLocalUtil<Claims> threadLocalUtil;
+    private static final Logger log        = LoggerFactory.getLogger(LoginInterceptor.class);
+    private static final Long   START_TIME = System.currentTimeMillis();
+
+    private final JWTUtil                 jwtUtil;
+    private final ThreadLocalUtil<Claims> threadLocalUtil;
 
     public LoginInterceptor(JWTUtil jwtUtil, ThreadLocalUtil<Claims> threadLocalUtil)
     {
@@ -97,5 +99,7 @@ public class LoginInterceptor implements HandlerInterceptor
         // 在处理完请求后应该清除与该请求相关的数据
         Optional.ofNullable(this.threadLocalUtil.get())
                 .ifPresent((Claims claims) -> this.threadLocalUtil.remove());
+
+        log.info("Request processing time: {}ms", (System.currentTimeMillis() - START_TIME));
     }
 }
