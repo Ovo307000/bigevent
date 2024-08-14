@@ -236,7 +236,8 @@ public class UserService
         String encryptedOldPassword = SHA256Encrypted.encrypt(oldPassword);
 
         // 验证加密后的旧密码是否与数据库中存储的密码一致
-        if (! Objects.equals(encryptedOldPassword, userByThreadLocal.getPassword()))
+        if (! Objects.equals(encryptedOldPassword,
+                             this.findUserById(userByThreadLocal.getId()).getPassword()))
         {
             throw new IllegalArgumentException("The old password is incorrect");
         }
@@ -250,5 +251,10 @@ public class UserService
 
         // 保存更新后的用户信息至数据库，并返回
         return this.userRepository.save(userByThreadLocal);
+    }
+
+    public UserDTO findUserById(@NotNull Long id)
+    {
+        return this.userRepository.findUsersById(id);
     }
 }
