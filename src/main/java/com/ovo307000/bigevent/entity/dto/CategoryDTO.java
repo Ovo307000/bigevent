@@ -14,16 +14,16 @@ import java.util.Set;
 public class CategoryDTO
 {
     @Id
-    @NotNull
+    @NotNull(groups = Add.class, message = "category id can not be null")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 32)
-    @NotEmpty(message = "category name cannot be empty")
+    @NotEmpty(groups = {Update.class, Add.class}, message = "category name cannot be empty")
     private String categoryName;
 
     @Column(nullable = false, length = 32)
-    @NotEmpty(message = "category alias cannot be empty")
+    @NotEmpty(groups = {Update.class, Add.class}, message = "category alias cannot be empty")
     private String categoryAlias;
 
     @ManyToOne
@@ -166,5 +166,15 @@ public class CategoryDTO
     public void setArticles(Set<ArticleDTO> articles)
     {
         this.articles = articles;
+    }
+
+    public interface Update
+    {
+
+    }
+
+    public interface Add
+    {
+
     }
 }

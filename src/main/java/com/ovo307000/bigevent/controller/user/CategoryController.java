@@ -20,6 +20,7 @@ import java.util.Optional;
 public class CategoryController
 {
     private static final Logger          log = LoggerFactory.getLogger(CategoryController.class);
+
     private final        CategoryService userCategoryService;
 
     public CategoryController(CategoryService userCategoryService)
@@ -28,7 +29,7 @@ public class CategoryController
     }
 
     @PostMapping("/category")
-    public Result<?> add(@RequestBody @Validated @NotNull CategoryDTO categoryDTO)
+    public Result<?> add(@RequestBody @Validated(CategoryDTO.Add.class) @NotNull CategoryDTO categoryDTO)
     {
         log.info("Adding category: {}", categoryDTO);
 
@@ -58,7 +59,8 @@ public class CategoryController
     }
 
     @PutMapping("/category")
-    public Result<CategoryDTO> update(@RequestBody @Validated @NotNull CategoryDTO categoryDTO)
+    public Result<CategoryDTO> update(
+            @RequestBody @Validated(CategoryDTO.Update.class) @NotNull CategoryDTO categoryDTO)
     {
         log.info("Updating category: {}", categoryDTO);
 
