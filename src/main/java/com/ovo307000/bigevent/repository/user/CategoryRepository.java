@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository("userCategoryRepository")
-public interface CategoryRepository extends JpaRepository<CategoryDTO, Integer>
+public interface CategoryRepository extends JpaRepository<CategoryDTO, Long>
 {
     List<CategoryDTO> findCategoryDTOByCreateUser(UserDTO userDTO);
 
