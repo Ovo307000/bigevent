@@ -57,7 +57,7 @@ public class CategoryController
                        .orElse(Result.fail(CategoryStatus.FAILED, null));
     }
 
-    @PutMapping("/category/update")
+    @PutMapping("/category")
     public Result<?> update(@RequestBody @Validated @NotNull CategoryDTO categoryDTO)
     {
         log.info("Updating category: {}", categoryDTO);
