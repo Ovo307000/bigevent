@@ -14,7 +14,7 @@ import java.util.Set;
 public class CategoryDTO
 {
     @Id
-    @NotNull(groups = Add.class, message = "category id can not be null")
+    @NotNull(groups = Update.class, message = "category id can not be null")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
