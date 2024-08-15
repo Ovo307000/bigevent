@@ -35,7 +35,7 @@ public class ArticleDTO
 
     @Column(length = 3)
     @NotEmpty(groups = {Update.class, Add.class}, message = "article state cannot be empty")
-    @Pattern(regexp = "^(草稿|发布)$", message = "article state can only be '草稿' or '发布'")
+    @Pattern(regexp = "^(已草稿|发布)$", message = "article state can only be '草稿' or '已发布'")
     private String state = "草稿";
 
     @ManyToOne
