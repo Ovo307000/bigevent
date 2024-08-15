@@ -141,7 +141,7 @@ public class UserController
     }
 
     @PatchMapping("/updateAvatar")
-    public Result<UserDTO> updateAvatar(@RequestParam String avatarUrl)
+    public Result<UserDTO> updateAvatar(@RequestParam @NotNull String avatarUrl)
     {
         return Optional.ofNullable(this.userService.updateAvatar(avatarUrl))
                        .map(Result::success)
