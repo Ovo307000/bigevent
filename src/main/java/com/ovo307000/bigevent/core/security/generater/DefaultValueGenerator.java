@@ -13,9 +13,9 @@ public class DefaultValueGenerator
     private final SecureRandom secureRandom = new SecureRandom();
 
     // 随机密码生成器
-    public String generateRandomPassword()
+    public String generateRandomString(Integer length)
     {
-        return this.secureRandom.ints(10)
+        return this.secureRandom.ints(length)
                                 .mapToObj((int i) ->
                                           {
                                               try

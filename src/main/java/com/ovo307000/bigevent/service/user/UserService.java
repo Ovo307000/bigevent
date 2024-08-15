@@ -158,7 +158,7 @@ public class UserService
         // 创建一个新的UserDTO对象，以避免直接修改传入的对象
         UserDTO newUser = new UserDTO();
         // 生成一个随机密码，用于备用
-        String randomPassword = this.defaultValueGenerator.generateRandomPassword();
+        String randomPassword = this.defaultValueGenerator.generateRandomString(12);
 
         // 复制传入的user对象的属性到新创建的newUser对象
         BeanUtils.copyProperties(user, newUser);
