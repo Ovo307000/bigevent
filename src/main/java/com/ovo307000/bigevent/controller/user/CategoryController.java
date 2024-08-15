@@ -58,12 +58,12 @@ public class CategoryController
     }
 
     @PutMapping("/category")
-    public Result<?> update(@RequestBody @Validated @NotNull CategoryDTO categoryDTO)
+    public Result<CategoryDTO> update(@RequestBody @Validated @NotNull CategoryDTO categoryDTO)
     {
         log.info("Updating category: {}", categoryDTO);
 
-        return Objects.equals(this.userCategoryService.update(categoryDTO), CategoryStatus.SUCCESS)
-               ? Result.success()
-               : Result.fail();
+        return Optional.ofNullable(this.userCategoryService.update(categoryDTO))
+                       .map(Result::success)
+                       .orElse(Result.fail(CategoryStatus.FAILED, null));
     }
 }

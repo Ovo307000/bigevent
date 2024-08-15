@@ -70,17 +70,24 @@ public class CategoryService
      *
      * @return 返回更新操作的状态，成功或失败这通过CategoryStatus枚举表示
      */
-    public String update(CategoryDTO categoryDTO)
+    public CategoryDTO update(CategoryDTO categoryDTO)
     {
-        // 设置更新时间为当前时间，以记录最新的修改时间点
+        // 确保要更新的类别在数据库中存在
+        Objects.requireNonNull(this.userCategoryRepository.findCategoryDTOById(categoryDTO.getId()),
+                               "Category is not in database");
+
+        // 获取当前操作用户，确保用户存在
+        UserDTO user = Objects.requireNonNull(this.userUserService.findUserByThreadLocal(), "user not found");
+
+        // 设置类别的更新时间为当前时间，以及更新操作的用户
         categoryDTO.setUpdateTime(LocalDateTime.now());
+        categoryDTO.setCreateUser(user);
 
-        // 确保类别ID不为空，这是进行数据库操作的必要条件
-        Long id = Objects.requireNonNull(categoryDTO.getId(), "category id can not be null");
+        // 记录调试信息，尝试更新数据库中的类别信息
+        log.debug("Try to update category in database: {}", categoryDTO);
 
-        // 尝试更新数据库中的类别信息，根据影响的行数判断操作是否成功
-        return this.userCategoryRepository.updateCategoryDTOById(categoryDTO, id) > 0
-               ? CategoryStatus.SUCCESS
-               : CategoryStatus.FAILED;
+        // 保存更新后的类别对象到数据库，并返回
+        return this.userCategoryRepository.save(categoryDTO);
     }
+
 }
