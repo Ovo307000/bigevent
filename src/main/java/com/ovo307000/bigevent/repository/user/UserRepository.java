@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository("userUserRepository")
-public interface UserRepository extends JpaRepository<UserDTO, Integer>
+public interface UserRepository extends JpaRepository<UserDTO, Long>
 {
     List<UserDTO> findUsersByNickname(@Param("nickname") String nickname);
 
