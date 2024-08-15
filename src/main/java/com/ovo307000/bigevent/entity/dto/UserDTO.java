@@ -3,6 +3,8 @@ package com.ovo307000.bigevent.entity.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -14,6 +16,7 @@ public class UserDTO
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(groups = Update.class, message = "user id can not be null")
     private Long id;
 
     @Column(unique = true, nullable = false, length = 20)
@@ -225,5 +228,15 @@ public class UserDTO
     public void setArticles(Set<ArticleDTO> articles)
     {
         this.articles = articles;
+    }
+
+    public interface Update
+    {
+
+    }
+
+    public interface Add
+    {
+
     }
 }
