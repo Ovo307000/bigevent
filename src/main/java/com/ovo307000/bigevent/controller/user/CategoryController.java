@@ -19,9 +19,9 @@ import java.util.Optional;
 @RestController("userCategoryController")
 public class CategoryController
 {
-    private static final Logger          log = LoggerFactory.getLogger(CategoryController.class);
+    private static final Logger log = LoggerFactory.getLogger(CategoryController.class);
 
-    private final        CategoryService userCategoryService;
+    private final CategoryService userCategoryService;
 
     public CategoryController(CategoryService userCategoryService)
     {
@@ -59,13 +59,11 @@ public class CategoryController
     }
 
     @PutMapping("/category")
-    public Result<CategoryDTO> update(
-            @RequestBody @Validated(CategoryDTO.Update.class) @NotNull CategoryDTO categoryDTO)
+    public Result<?> update(@RequestBody @Validated(CategoryDTO.Update.class) @NotNull CategoryDTO categoryDTO)
     {
         log.info("Updating category: {}", categoryDTO);
 
-        return Optional.ofNullable(this.userCategoryService.update(categoryDTO))
-                       .map(Result::success)
-                       .orElse(Result.fail(CategoryStatus.FAILED, null));
+        return Objects.equals(this.userCategoryService.update(categoryDTO), CategoryStatus.SUCCESS) ? Result.success(
+                CategoryStatus.SUCCESS) : Result.fail(CategoryStatus.FAILED);
     }
 }

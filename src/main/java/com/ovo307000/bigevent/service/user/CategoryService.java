@@ -70,7 +70,7 @@ public class CategoryService
      *
      * @return 返回更新操作的状态，成功或失败这通过CategoryStatus枚举表示
      */
-    public CategoryDTO update(CategoryDTO categoryDTO)
+    public String update(CategoryDTO categoryDTO)
     {
         // 确保要更新的类别在数据库中存在
         Objects.requireNonNull(this.userCategoryRepository.findCategoryDTOById(categoryDTO.getId()),
@@ -87,7 +87,10 @@ public class CategoryService
         log.debug("Try to update category in database: {}", categoryDTO);
 
         // 保存更新后的类别对象到数据库，并返回
-        return this.userCategoryRepository.save(categoryDTO);
+        return this.userCategoryRepository.updateCategoryDTO(categoryDTO) == 0
+               ? CategoryStatus.FAILED
+               : CategoryStatus.SUCCESS;
+
     }
 
 }
