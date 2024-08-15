@@ -4,13 +4,13 @@ import com.ovo307000.bigevent.core.constants.enumeration.status.ArticleAStatus;
 import com.ovo307000.bigevent.entity.dto.ArticleDTO;
 import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.user.ArticleService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+@Validated
 @RequestMapping("/article")
 @RestController("userArticleController")
 public class ArticleController
@@ -29,5 +29,13 @@ public class ArticleController
                        .filter((List<ArticleDTO> articles) -> ! articles.isEmpty())
                        .map(Result::success)
                        .orElse(Result.fail(ArticleAStatus.ARTICLE_NOT_FOUND, null));
+    }
+
+    @PutMapping("/add")
+    public Result<ArticleDTO> add(@RequestBody @Validated(ArticleDTO.Add.class) ArticleDTO articleDTO)
+    {
+        return Optional.ofNullable(this.articleService.add(articleDTO))
+                       .map(Result::success)
+                       .orElse(Result.fail(ArticleAStatus.FAILED, null));
     }
 }

@@ -2,6 +2,10 @@ package com.ovo307000.bigevent.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -11,23 +15,32 @@ import java.util.Objects;
 public class ArticleDTO
 {
     @Id
+    @NotNull(groups = Update.class, message = "article id can not be null")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 30)
+    @NotEmpty(groups = {Update.class, Add.class}, message = "article title cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "article title can only contain letters, numbers and underscores")
     private String title;
 
     @Column(nullable = false, length = 10000)
+    @NotEmpty(groups = {Update.class, Add.class}, message = "article content cannot be empty")
     private String content;
 
+    @URL
     @Column(nullable = false, length = 128)
+    @NotEmpty(groups = {Update.class, Add.class}, message = "article cover image cannot be empty")
     private String coverImg;
 
     @Column(length = 3)
+    @NotEmpty(groups = {Update.class, Add.class}, message = "article state cannot be empty")
+    @Pattern(regexp = "^(草稿|发布)$", message = "article state can only be '草稿' or '发布'")
     private String state = "草稿";
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @NotEmpty(groups = {Update.class, Add.class}, message = "article category cannot be empty")
     private CategoryDTO category;
 
     @ManyToOne
@@ -190,5 +203,15 @@ public class ArticleDTO
     public void setUpdateTime(LocalDateTime updateTime)
     {
         this.updateTime = updateTime;
+    }
+
+    public interface Add
+    {
+
+    }
+
+    public interface Update
+    {
+
     }
 }

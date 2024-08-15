@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 @Repository("userArticleRepository")
 public interface ArticleRepository extends JpaRepository<ArticleDTO, Integer>
 {
-
 }
