@@ -19,7 +19,7 @@ import java.util.Optional;
 public class LoginInterceptor implements HandlerInterceptor
 {
     private static final Logger log        = LoggerFactory.getLogger(LoginInterceptor.class);
-    private static final Long   START_TIME = System.currentTimeMillis();
+    private static       Long   START_TIME = System.currentTimeMillis();
 
     private final JWTUtil                 jwtUtil;
     private final ThreadLocalUtil<Claims> threadLocalUtil;
@@ -101,5 +101,7 @@ public class LoginInterceptor implements HandlerInterceptor
                 .ifPresent((Claims claims) -> this.threadLocalUtil.remove());
 
         log.info("Request processing time: {}ms", (System.currentTimeMillis() - START_TIME));
+
+        START_TIME = System.currentTimeMillis();
     }
 }
