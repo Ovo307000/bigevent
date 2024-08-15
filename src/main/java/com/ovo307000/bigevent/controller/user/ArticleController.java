@@ -2,12 +2,13 @@ package com.ovo307000.bigevent.controller.user;
 
 import com.ovo307000.bigevent.core.constants.enumeration.status.ArticleAStatus;
 import com.ovo307000.bigevent.entity.dto.ArticleDTO;
+import com.ovo307000.bigevent.response.Page;
 import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.user.ArticleService;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @Validated
@@ -22,11 +23,13 @@ public class ArticleController
         this.articleService = articleService;
     }
 
-    @GetMapping("/list")
-    public Result<List<ArticleDTO>> list()
+    @GetMapping()
+    public Result<Page<ArticleDTO>> list(@NotNull(message = "pageNumber cannot be null") Integer pageNumber,
+                                         @NotNull(message = "pageSize cannot be null") Integer pageSize,
+                                         @RequestParam(required = false) Long categoryId,
+                                         @RequestParam(required = false) String status)
     {
-        return Optional.ofNullable(this.articleService.list())
-                       .filter((List<ArticleDTO> articles) -> ! articles.isEmpty())
+        return Optional.ofNullable(this.articleService.list(pageNumber, pageSize, categoryId, status))
                        .map(Result::success)
                        .orElse(Result.fail(ArticleAStatus.ARTICLE_NOT_FOUND, null));
     }
