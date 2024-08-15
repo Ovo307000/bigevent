@@ -23,7 +23,7 @@ public class ArticleController
     }
 
     @GetMapping("/list")
-    public Result<?> list()
+    public Result<List<ArticleDTO>> list()
     {
         return Optional.ofNullable(this.articleService.list())
                        .filter((List<ArticleDTO> articles) -> ! articles.isEmpty())
