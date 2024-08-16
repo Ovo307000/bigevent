@@ -1,38 +1,50 @@
 package com.ovo307000.bigevent.core.utils;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
 class ThreadLocalUtilTest
 {
-    private static final Logger log = LoggerFactory.getLogger(ThreadLocalUtilTest.class);
+    @InjectMocks
+    private ThreadLocalUtil<String> threadLocalUtil;
+
+    @BeforeEach
+    void setUp()
+    {
+        MockitoAnnotations.openMocks(this); // Use openMocks instead of initMocks
+    }
 
     @Test
-    void contextLoads()
+    void getAndRemove_WhenSet_ExpectReturnsValueAndRemovesIt()
     {
-        ThreadLocal<String> nameThreadLocal = new ThreadLocal<>();
+        // Arrange
+        String value = "testValue";
+        this.threadLocalUtil.set(value);
 
-        List<Thread> threadList = List.of(new Thread(() -> new Thread(() -> nameThreadLocal.set(Thread.currentThread()
-                                                                                                      .getName())).start()),
-                                          new Thread(nameThreadLocal::get));
+        // Act
+        String result = this.threadLocalUtil.getAndRemove();
 
-        threadList.forEach(Thread::start);
+        // Assert
+        assertEquals(value, result, "Expected the getAndRemove method to return the set value.");
+        assertNull(this.threadLocalUtil.get(), "Expected the thread local value to be removed after getAndRemove.");
+    }
 
-        threadList.forEach((Thread thread) ->
-                           {
-                               try
-                               {
-                                   thread.join();
-                               }
-                               catch (InterruptedException e)
-                               {
-                                   log.debug("Thread interrupted", e);
-                               }
-                           });
+    @Test
+    void getAndRemove_WhenNotSet_ExpectReturnsNullAndDoesNothing()
+    {
+        // Act
+        String result = this.threadLocalUtil.getAndRemove();
+
+        // Assert
+        assertNull(result, "Expected the getAndRemove method to return null when no value is set.");
+        assertNull(this.threadLocalUtil.get(),
+                   "Expected the thread local value to remain null after getAndRemove when no value is set.");
     }
 }
