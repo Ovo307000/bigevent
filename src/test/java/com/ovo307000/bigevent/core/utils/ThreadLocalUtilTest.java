@@ -1,5 +1,6 @@
 package com.ovo307000.bigevent.core.utils;
 
+import org.hibernate.annotations.Comment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
