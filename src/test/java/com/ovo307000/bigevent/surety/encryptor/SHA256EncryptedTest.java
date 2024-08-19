@@ -1,5 +1,6 @@
 package com.ovo307000.bigevent.surety.encryptor;
 
+import cn.hutool.core.collection.CollUtil;
 import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,5 +20,7 @@ class SHA256EncryptedTest
         String encrypted = SHA256Encrypted.encrypt("test");
 
         log.info("encryptor: {}", encrypted);
+
+        CollUtil.join()
     }
 }
