@@ -1,9 +1,6 @@
 package com.ovo307000.bigevent.core.utils;
 
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import io.minio.errors.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
@@ -40,18 +37,18 @@ public class MinioUtil
      * @throws XmlParserException        当XML解析失败时
      * @throws InternalException         当发生内部错误时
      */
-    public void upload(@NotNull(message = "File cannot be null") MultipartFile file,
-                       @NotNull(message = "Bucket name cannot be null") String bucketName,
-                       @NotNull(message = "Object name cannot be null") String objectName) throws
-                                                                                           IOException,
-                                                                                           ServerException,
-                                                                                           InsufficientDataException,
-                                                                                           ErrorResponseException,
-                                                                                           NoSuchAlgorithmException,
-                                                                                           InvalidKeyException,
-                                                                                           InvalidResponseException,
-                                                                                           XmlParserException,
-                                                                                           InternalException
+    public ObjectWriteResponse upload(@NotNull(message = "File cannot be null") MultipartFile file,
+                                      @NotNull(message = "Bucket name cannot be null") String bucketName,
+                                      @NotNull(message = "Object name cannot be null") String objectName) throws
+                                                                                                          IOException,
+                                                                                                          ServerException,
+                                                                                                          InsufficientDataException,
+                                                                                                          ErrorResponseException,
+                                                                                                          NoSuchAlgorithmException,
+                                                                                                          InvalidKeyException,
+                                                                                                          InvalidResponseException,
+                                                                                                          XmlParserException,
+                                                                                                          InternalException
     {
         if (! this.bucketExists(bucketName))
         {
@@ -67,7 +64,7 @@ public class MinioUtil
                                                    .build();
 
         // 使用MinIO客户端上传文件
-        this.minioClient.putObject(putObjectArgs);
+        return this.minioClient.putObject(putObjectArgs);
     }
 
     public boolean bucketExists(@NotNull String bucketName) throws

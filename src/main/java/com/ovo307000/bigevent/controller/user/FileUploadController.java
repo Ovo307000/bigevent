@@ -42,6 +42,6 @@ public class FileUploadController
 
         this.fileUploadService.upload(file);
 
-        return Result.success("upload success");
+        return Result.success("Upload success");
     }
 }
