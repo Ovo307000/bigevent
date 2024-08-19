@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Service("fileUploadService")
-public class FileUploadService
+@Service("fileService")
+public class FileService
 {
-    private static final Logger log = LoggerFactory.getLogger(FileUploadService.class);
+    private static final Logger log = LoggerFactory.getLogger(FileService.class);
 
     private final MinioClient minioClient;
     private final String      bucketName;
     private final FileUtil    fileUtil;
 
-    public FileUploadService(MinioClient minioClient, MinioProperties minioProperties, FileUtil fileUtil)
+    public FileService(MinioClient minioClient, MinioProperties minioProperties, FileUtil fileUtil)
     {
         this.minioClient = minioClient;
 
@@ -55,7 +55,7 @@ public class FileUploadService
                                                                                                  try
                                                                                                  {
                                                                                                      // 异步上传单个文件并返回响应
-                                                                                                     return FileUploadService.this.put(
+                                                                                                     return FileService.this.put(
                                                                                                              file);
                                                                                                  }
                                                                                                  catch (Exception exception)
@@ -154,7 +154,7 @@ public class FileUploadService
                                                                                                  try
                                                                                                  {
                                                                                                      // 异步上传单个文件并返回响应
-                                                                                                     return FileUploadService.this.upload(
+                                                                                                     return FileService.this.upload(
                                                                                                              file);
                                                                                                  }
                                                                                                  catch (Exception exception)

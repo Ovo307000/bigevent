@@ -2,7 +2,7 @@ package com.ovo307000.bigevent.controller.user;
 
 import com.ovo307000.bigevent.core.constants.enumeration.status.FileStatus;
 import com.ovo307000.bigevent.response.Result;
-import com.ovo307000.bigevent.service.user.FileUploadService;
+import com.ovo307000.bigevent.service.user.FileService;
 import io.minio.ObjectWriteResponse;
 import io.minio.errors.*;
 import org.slf4j.Logger;
@@ -17,16 +17,17 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-@RestController("userFileUploadController")
-@RequestMapping("/upload")
-public class FileUploadController
+@RestController("userFileController")
+@RequestMapping()
+public class FileController
 {
-    private static final Logger            log = LoggerFactory.getLogger(FileUploadController.class);
-    private final        FileUploadService fileUploadService;
+    private static final Logger log = LoggerFactory.getLogger(FileController.class);
 
-    public FileUploadController(FileUploadService fileUploadService)
+    private final FileService fileService;
+
+    public FileController(FileService fileService)
     {
-        this.fileUploadService = fileUploadService;
+        this.fileService = fileService;
     }
 
     /**
@@ -68,14 +69,14 @@ public class FileUploadController
         else if (files.size() > 1)
         {
             // 如果有多个文件，则异步上传所有文件，并返回所有文件的上传响应
-            List<ObjectWriteResponse> objectWriteResponses = this.fileUploadService.uploadAsync(files);
+            List<ObjectWriteResponse> objectWriteResponses = this.fileService.uploadAsync(files);
 
             return Result.success(FileStatus.UPLOAD_SUCCESS, objectWriteResponses);
         }
         else
         {
             // 如果只有一个文件，则直接上传该文件，并返回单个文件的上传响应
-            return Result.success(FileStatus.UPLOAD_SUCCESS, this.fileUploadService.upload(files.getFirst()));
+            return Result.success(FileStatus.UPLOAD_SUCCESS, this.fileService.upload(files.getFirst()));
         }
     }
 }
