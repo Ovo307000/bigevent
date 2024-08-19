@@ -1,10 +1,8 @@
 package com.ovo307000.bigevent.service.user;
 
 import com.ovo307000.bigevent.config.properties.MinioProperties;
-import com.ovo307000.bigevent.core.constants.enumeration.status.FileStatus;
-import com.ovo307000.bigevent.core.utils.MinioUtil;
-import io.minio.MinioClient;
-import io.minio.ObjectWriteResponse;
+import com.ovo307000.bigevent.core.utils.FileUtil;
+import io.minio.*;
 import io.minio.errors.*;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -16,57 +14,105 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service("fileUploadService")
 public class FileUploadService
 {
     private static final Logger log = LoggerFactory.getLogger(FileUploadService.class);
+
     private final MinioClient minioClient;
-    private final MinioUtil       minioUtil;
-    private final MinioProperties minioProperties;
+    private final String      bucketName;
+    private final FileUtil    fileUtil;
 
-    public FileUploadService(MinioClient minioClient, MinioUtil minioUtil, MinioProperties minioProperties)
+    public FileUploadService(MinioClient minioClient, MinioProperties minioProperties, FileUtil fileUtil)
     {
-        this.minioClient     = minioClient;
-        this.minioUtil       = minioUtil;
-        this.minioProperties = minioProperties;
+        this.minioClient = minioClient;
+
+        this.bucketName = Objects.requireNonNull(minioProperties.getBucketName(), "Minio bucket name cannot be null");
+
+        log.debug("bucketName: {}", this.bucketName);
+        this.fileUtil = fileUtil;
     }
 
-    public String upload(@NotNull MultipartFile file) throws
-                                                      ServerException,
-                                                      InsufficientDataException,
-                                                      ErrorResponseException,
-                                                      IOException,
-                                                      NoSuchAlgorithmException,
-                                                      InvalidKeyException,
-                                                      InvalidResponseException,
-                                                      XmlParserException,
-                                                      InternalException
+    public ObjectWriteResponse upload(@NotNull MultipartFile file) throws
+                                                                   ServerException,
+                                                                   InsufficientDataException,
+                                                                   ErrorResponseException,
+                                                                   IOException,
+                                                                   NoSuchAlgorithmException,
+                                                                   InvalidKeyException,
+                                                                   InvalidResponseException,
+                                                                   XmlParserException,
+                                                                   InternalException
     {
-        ObjectWriteResponse response = this.minioUtil.upload(file,
-                                                           this.minioProperties.getBucketName(),
-                                                           this.generateFileNameByUUID(file));
+        this.createBucketIfNotExists(this.bucketName);
 
-        log.debug("Upload file: {} success, response: {}", file.getOriginalFilename(), response);
-
-        return FileStatus.UPLOAD_SUCCESS;
+        return this.minioClient.uploadObject(this.getUploadObjectArgs(file, this.bucketName));
     }
 
-    public String generateFileNameByUUID(@NotNull MultipartFile file)
+    private void createBucketIfNotExists(String bucketName) throws
+                                                            IOException,
+                                                            ServerException,
+                                                            InsufficientDataException,
+                                                            ErrorResponseException,
+                                                            NoSuchAlgorithmException,
+                                                            InvalidKeyException,
+                                                            InvalidResponseException,
+                                                            XmlParserException,
+                                                            InternalException
     {
-        return UUID.randomUUID() + "." + this.getFileSuffix(file);
+        if (! this.minioClient.bucketExists(getBucketExistsArgs(bucketName)))
+        {
+            this.minioClient.makeBucket(getMakeBucketArgs(bucketName));
+        }
     }
 
-    /**
-     * 获取文件的后缀
-     */
-    private String getFileSuffix(@NotNull MultipartFile file)
+    private static MakeBucketArgs getMakeBucketArgs(String bucketName)
     {
-        String fileName = Objects.requireNonNull(file.getOriginalFilename(), "file name is not found");
+        return MakeBucketArgs.builder()
+                             .bucket(bucketName)
+                             .build();
+    }
 
-        return Optional.of(fileName.substring(fileName.lastIndexOf(".")))
-                       .orElseThrow(() -> new IllegalArgumentException("file suffix is not found"));
+    private static BucketExistsArgs getBucketExistsArgs(String bucketName)
+    {
+        return BucketExistsArgs.builder()
+                               .bucket(bucketName)
+                               .build();
+    }
+
+    private UploadObjectArgs getUploadObjectArgs(MultipartFile file, String bucketName) throws IOException
+    {
+        return UploadObjectArgs.builder()
+                               .bucket(bucketName)
+                               .object(this.fileUtil.generateUUIDFileName(file.getOriginalFilename()))
+                               .filename(file.getOriginalFilename())
+                               .build();
+    }
+
+    public ObjectWriteResponse put(@NotNull MultipartFile file) throws
+                                                                ServerException,
+                                                                InsufficientDataException,
+                                                                ErrorResponseException,
+                                                                IOException,
+                                                                NoSuchAlgorithmException,
+                                                                InvalidKeyException,
+                                                                InvalidResponseException,
+                                                                XmlParserException,
+                                                                InternalException
+    {
+        this.createBucketIfNotExists(this.bucketName);
+
+        return this.minioClient.putObject(this.getPutObjectArgs(file, this.bucketName));
+    }
+
+    private PutObjectArgs getPutObjectArgs(MultipartFile file, String bucketName) throws IOException
+    {
+        return PutObjectArgs.builder()
+                            .object(this.fileUtil.generateUUIDFileName(file.getOriginalFilename()))
+                            .bucket(bucketName)
+                            .contentType(file.getContentType())
+                            .stream(file.getInputStream(), file.getSize(), - 1)
+                            .build();
     }
 }
