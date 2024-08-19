@@ -64,7 +64,7 @@ public class FileController
         if (files.isEmpty())
         {
             // 如果没有文件被上传，则返回上传失败的结果
-            return Result.fail(FileStatus.UPLOAD_FAILURE);
+            return Result.fail(FileStatus.FILE_LIST_EMPTY, null);
         }
         else if (files.size() > 1)
         {
