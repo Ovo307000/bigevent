@@ -1,5 +1,6 @@
 package com.ovo307000.bigevent.controller.user;
 
+import com.ovo307000.bigevent.core.constants.enumeration.status.FileStatus;
 import com.ovo307000.bigevent.response.Result;
 import com.ovo307000.bigevent.service.user.FileUploadService;
 import io.minio.errors.*;
@@ -40,8 +41,9 @@ public class FileUploadController
     {
         log.info("Try to upload file: {}", file.getOriginalFilename());
 
-        this.fileUploadService.upload(file);
-
-        return Result.success("Upload success");
+        return this.fileUploadService.upload(file)
+                                     .equals(FileStatus.UPLOAD_SUCCESS)
+               ? Result.success(FileStatus.UPLOAD_SUCCESS)
+               : Result.fail(FileStatus.UPLOAD_FAILURE);
     }
 }
