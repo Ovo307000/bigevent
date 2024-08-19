@@ -133,7 +133,8 @@ public class UserController
     }
 
     @PutMapping("/update")
-    public Result<UserDTO> update(@RequestBody @Validated(UserDTO.Update.class) UserDTO user) throws NoSuchAlgorithmException
+    public Result<UserDTO> update(@RequestBody @Validated(UserDTO.Update.class) UserDTO user)
+            throws NoSuchAlgorithmException
     {
         return Optional.ofNullable(this.userService.update(user))
                        .map(Result::success)

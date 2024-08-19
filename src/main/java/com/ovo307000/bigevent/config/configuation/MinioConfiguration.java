@@ -17,6 +17,7 @@ public class MinioConfiguration
      * 该方法通过注入MinioProperties配置来初始化MinioClient，实现了从配置中动态获取Minio连接信息的功能
      *
      * @param minioProperties 包含Minio配置信息的对象，包括端点、访问密钥和秘密密钥等
+     *
      * @return 初始化并配置好的MinioClient实例
      */
     @Bean()
