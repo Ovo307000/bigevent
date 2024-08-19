@@ -15,7 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @RestController("userFileController")
 @RequestMapping()
@@ -69,14 +72,21 @@ public class FileController
         else if (files.size() > 1)
         {
             // 如果有多个文件，则异步上传所有文件，并返回所有文件的上传响应
-            List<ObjectWriteResponse> objectWriteResponses = this.fileService.uploadAsync(files);
+            List<ObjectWriteResponse> objectWriteResponses = new ArrayList<>();
+
+            objectWriteResponses = this.fileService.handleFilesAsync(files, FileService.Type.UPLOAD)
+                                                   .stream()
+                                                   .map(CompletableFuture::join)
+                                                   .filter(Objects::nonNull)
+                                                   .toList();
 
             return Result.success(FileStatus.UPLOAD_SUCCESS, objectWriteResponses);
         }
         else
         {
             // 如果只有一个文件，则直接上传该文件，并返回单个文件的上传响应
-            return Result.success(FileStatus.UPLOAD_SUCCESS, this.fileService.upload(files.getFirst()));
+            return Result.success(FileStatus.UPLOAD_SUCCESS,
+                                  this.fileService.handleFile(files.getFirst(), FileService.Type.UPLOAD));
         }
     }
 }

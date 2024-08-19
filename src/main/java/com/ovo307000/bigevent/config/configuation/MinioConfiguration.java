@@ -20,7 +20,7 @@ public class MinioConfiguration
      *
      * @return 初始化并配置好的MinioClient实例
      */
-    @Bean()
+    @Bean
     public MinioClient minioClient(MinioProperties minioProperties)
     {
         // 输出调试信息，记录传入的Minio配置信息
