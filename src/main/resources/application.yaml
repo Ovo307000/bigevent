@@ -23,9 +23,7 @@ spring  :
 
   data   :
     redis:
-      url : localhost
-      port: 6379
-      
+      url: redis://localhost:6379
 
 logging :
   level:
