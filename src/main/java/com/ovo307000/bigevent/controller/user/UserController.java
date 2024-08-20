@@ -185,7 +185,9 @@ public class UserController
 
         // 调用用户服务来更新密码
         UserDTO result = this.userService.updateUserPassword(newPassword, oldPassword, repeatPassword);
-        // 删除用户在Redis中的令牌，因为密码更新了，令牌失效，务必要在更新完成后删除，否则如果更新时抛出异常，令牌删除，导致拦截器无法正常放行
+        // 删除用户在Redis中的令牌，因为密码更新了，令牌失效，务必要在更新完成后删除
+        // 否则如果更新时抛出异常，令牌删除，而拦截器每次会校验令牌，会判空，导致后续需要拦截的页面无法访问
+        // 只能重新登陆后将令牌重新生成并放入Redis才能访问
         this.deleteUserTokenFromRedis(Objects.requireNonNull(this.userService.findUserByThreadLocal())
                                              .getUsername());
         // 处理并返回更新结果
