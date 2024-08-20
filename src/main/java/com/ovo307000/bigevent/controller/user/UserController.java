@@ -16,9 +16,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +27,8 @@ import java.util.concurrent.TimeUnit;
 @RestController("userUserController")
 public class UserController
 {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log         = LoggerFactory.getLogger(UserController.class);
+    private static final String AUTH_HEADER = "Authorization";
 
     private final UserService         userService;
     private final JWTUtil             jwtUtil;
@@ -94,10 +95,12 @@ public class UserController
     {
         log.info("Finding user by nickname: {}", nickname);
 
-        return Optional.ofNullable(this.userService.findUserByNickname(nickname))
-                       .filter((List<UserDTO> users) -> ! users.isEmpty())
-                       .map(Result::success)
-                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
+        return this.processFindResultList(this.userService.findUserByNickname(nickname));
+    }
+
+    private <T> Result<List<T>> processFindResultList(List<T> result)
+    {
+        return result.isEmpty() ? Result.fail(UserStatus.USER_NOT_EXISTS, null) : Result.success(result);
     }
 
     @GetMapping("/findUserByUsernameLikeIgnoreCase")
@@ -105,10 +108,7 @@ public class UserController
     {
         log.info("Finding user by username like: {}", username);
 
-        return Optional.ofNullable(this.userService.findUserByUsernameLikeIgnoreCase(username))
-                       .filter((List<UserDTO> users) -> ! users.isEmpty())
-                       .map(Result::success)
-                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
+        return this.processFindResultList(this.userService.findUserByUsernameLikeIgnoreCase(username));
     }
 
     @GetMapping("/findUserByNicknameLikeIgnoreCase")
@@ -116,10 +116,7 @@ public class UserController
     {
         log.info("Finding user by nickname like: {}", nickname);
 
-        return Optional.ofNullable(this.userService.findUserByNicknameLikeIgnoreCase(nickname))
-                       .filter((List<UserDTO> users) -> ! users.isEmpty())
-                       .map(Result::success)
-                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
+        return this.processFindResultList(this.userService.findUserByNicknameLikeIgnoreCase(nickname));
     }
 
     @GetMapping("/findUserByUsername")
@@ -127,58 +124,60 @@ public class UserController
     {
         log.info("Finding user by username: {}", username);
 
-        return Optional.ofNullable(this.userService.findUserByUsername(username))
+        return this.processFindResult(this.userService.findUserByUsername(username));
+    }
+
+    private <T> Result<T> processFindResult(T result)
+    {
+        return Optional.ofNullable(result)
                        .map(Result::success)
-                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
+                       .orElse(Result.fail(UserStatus.FAILED, null));
     }
 
     // TODO: 由于不启用拦截，无法获取到当前登录用户的信息，需要完善
     @GetMapping("/userInfo")
-    public Result<UserDTO> userInfo(@RequestHeader("Authorization") String token)
+    public Result<UserDTO> userInfo(@RequestHeader(AUTH_HEADER) String token)
     {
         log.info("Getting user info by token: {}", token);
 
-        return Optional.ofNullable(this.userService.findUserByThreadLocal())
-                       .map(Result::success)
-                       .orElse(Result.fail(UserStatus.USER_NOT_EXISTS, null));
+        return this.processFindResult(this.userService.findUserByThreadLocal());
     }
 
     @PutMapping("/update")
     public Result<UserDTO> update(@RequestBody @Validated(UserDTO.Update.class) UserDTO user)
             throws NoSuchAlgorithmException
     {
-        return Optional.ofNullable(this.userService.update(user))
-                       .map(Result::success)
-                       .orElse(Result.fail(UserStatus.FAILED, null));
+        log.info("Updating user: {}", user);
+
+        return this.processFindResult(this.userService.update(user));
     }
 
     @PatchMapping("/updateAvatar")
     public Result<UserDTO> updateAvatar(@RequestParam @NotNull String avatarUrl)
     {
-        return Optional.ofNullable(this.userService.updateAvatar(avatarUrl))
-                       .map(Result::success)
-                       .orElse(Result.fail(UserStatus.FAILED, null));
+        log.info("Updating user avatar: {}", avatarUrl);
+
+        return this.processFindResult(this.userService.updateAvatar(avatarUrl));
     }
 
     @PatchMapping("/updatePwd")
     public Result<UserDTO> updatePassword(@RequestBody Map<String, Object> params) throws NoSuchAlgorithmException
     {
-        String repeatPassword = (String) Objects.requireNonNull(params.get("re_pwd"),
-                                                                UserStatus.PASSWORD_CANNOT_BE_EMPTY);
-        String oldPassword = (String) Objects.requireNonNull(params.get("old_pwd"),
-                                                             UserStatus.PASSWORD_CANNOT_BE_EMPTY);
-        String newPassword = (String) Objects.requireNonNull(params.get("new_pwd"),
-                                                             UserStatus.PASSWORD_CANNOT_BE_EMPTY);
+        String oldPassword    = (String) params.get("old_pwd");
+        String newPassword    = (String) params.get("new_pwd");
+        String repeatPassword = (String) params.get("re_pwd");
 
-        if (! StringUtils.hasLength(repeatPassword) ||
-            ! StringUtils.hasLength(oldPassword) ||
-            ! StringUtils.hasLength(newPassword))
+        if (! this.isPasswordInputValid(oldPassword, newPassword, repeatPassword))
         {
             return Result.fail(UserStatus.PASSWORD_CANNOT_BE_EMPTY, null);
         }
 
-        return Optional.ofNullable(this.userService.updateUserPassword(newPassword, oldPassword, repeatPassword))
-                       .map(Result::success)
-                       .orElse(Result.fail(UserStatus.FAILED, null));
+        return this.processFindResult(this.userService.updateUserPassword(newPassword, oldPassword, repeatPassword));
+    }
+
+    private boolean isPasswordInputValid(@NotNull String... passwords)
+    {
+        return Arrays.stream(passwords)
+                     .allMatch(StringUtils::hasLength);
     }
 }
