@@ -31,6 +31,15 @@ public class JWTUtil
                                                      .toUpperCase());
     }
 
+    /**
+     * 根据键算法名称获取签名算法的密钥
+     *
+     * @param keyAlgorithmUpperCase 键算法名称，大写格式
+     *
+     * @return 对应的签名算法密钥
+     *
+     * @throws IllegalArgumentException 如果提供的键算法名称不支持，则抛出此异常
+     */
     private SecretKey getSignatureAlgorithm(String keyAlgorithmUpperCase)
     {
         return switch (keyAlgorithmUpperCase)
@@ -50,7 +59,7 @@ public class JWTUtil
     //  2024年8月10日 18点52分
     //      生成加密的JWT Token，待实现
 
-        /**
+    /**
      * 验证和解析JWT Token
      * <p>
      * 通过使用SHA算法验证JWT Token，并解析出其中的声明（Claims）
@@ -73,7 +82,6 @@ public class JWTUtil
                    // 获取解析后的Payload部分
                    .getPayload();
     }
-
 
 
     /**
