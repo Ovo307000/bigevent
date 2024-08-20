@@ -55,7 +55,8 @@ public class ArticleService
         }
 
         // 从线程本地获取当前用户，如果找不到则抛出异常
-        UserDTO user = Objects.requireNonNull(this.userUserService.findUserByThreadLocal(), "user not found");
+        UserDTO                                          user = Objects.requireNonNull(this.userUserService.findUserByThreadLocal(),
+                                                                                       "user not found");
         com.ovo307000.bigevent.response.Page<ArticleDTO> page = new com.ovo307000.bigevent.response.Page<>();
 
         // 当未指定类别ID且文章状态为已发布时，执行此分支
