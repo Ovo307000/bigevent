@@ -16,10 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Validated
@@ -74,11 +71,9 @@ public class UserController
 
         String token = this.jwtUtil.generateTokenByUsernameAndPassword(username, password);
 
-        // 缓存用户信息
-        ValueOperations<String, String> stringStringValueOperations = this.stringRedisTemplate.opsForValue();
-        stringStringValueOperations.set(username, token, 72, TimeUnit.HOURS);
-
         log.debug("Token generated: {}", token);
+
+        this.saveUserTokenToRedis(username, token);
 
         return switch (this.userService.login(new UserDTO(username, password)))
         {
@@ -88,6 +83,13 @@ public class UserController
 
             default -> Result.fail(UserStatus.FAILED, null);
         };
+    }
+
+    private void saveUserTokenToRedis(String username, String token)
+    {
+        ValueOperations<String, String> stringStringValueOperations = this.stringRedisTemplate.opsForValue();
+
+        stringStringValueOperations.set(username, token, 72, TimeUnit.HOURS);
     }
 
     @GetMapping("/findUserByNickname")
@@ -172,6 +174,9 @@ public class UserController
             return Result.fail(UserStatus.PASSWORD_CANNOT_BE_EMPTY, null);
         }
 
+        this.deleteUserTokenFromRedis(Objects.requireNonNull(this.userService.findUserByThreadLocal())
+                                             .getUsername());
+
         return this.processFindResult(this.userService.updateUserPassword(newPassword, oldPassword, repeatPassword));
     }
 
@@ -179,5 +184,12 @@ public class UserController
     {
         return Arrays.stream(passwords)
                      .allMatch(StringUtils::hasLength);
+    }
+
+    private void deleteUserTokenFromRedis(String username)
+    {
+        this.stringRedisTemplate.opsForValue()
+                                .getOperations()
+                                .delete(username);
     }
 }
