@@ -18,14 +18,12 @@ import java.util.UUID;
 @Component("jwtUtil")
 public class JWTUtil
 {
-    private final JWTProperties           jwtProperties;
-    private final SecretKey               key;
-    private final ThreadLocalUtil<Claims> threadLocalUtil;
+    private final JWTProperties jwtProperties;
+    private final SecretKey     key;
 
-    public JWTUtil(@Qualifier("jwtProperties") JWTProperties jwtProperties, ThreadLocalUtil<Claims> threadLocalUtil)
+    public JWTUtil(@Qualifier("jwtProperties") JWTProperties jwtProperties)
     {
-        this.jwtProperties   = jwtProperties;
-        this.threadLocalUtil = threadLocalUtil;
+        this.jwtProperties = jwtProperties;
 
         this.key = this.getSignatureAlgorithm(Objects.requireNonNull(this.jwtProperties.getAlgorithmNameUpperCase(),
                                                                      "Algorithm name is null")
@@ -62,6 +60,13 @@ public class JWTUtil
                    .getPayload();
     }
 
+    public String generateTokenByUsernameAndPassword(String username, String password) throws NoSuchAlgorithmException
+    {
+        String encryptedPassword = SHA256Encrypted.encrypt(password);
+
+        return this.generateToken(Map.of("username", username, "password", encryptedPassword));
+    }
+
     public String generateToken(Map<String, Object> claims)
     {
         return Jwts.builder()
@@ -73,12 +78,5 @@ public class JWTUtil
                    .id(UUID.randomUUID()
                            .toString())
                    .compact();
-    }
-
-    public String generateTokenByUsernameAndPassword(String username, String password) throws NoSuchAlgorithmException
-    {
-        String encryptedPassword = SHA256Encrypted.encrypt(password);
-
-        return this.generateToken(Map.of("username", username, "password", encryptedPassword));
     }
 }
