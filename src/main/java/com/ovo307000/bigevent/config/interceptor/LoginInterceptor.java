@@ -52,6 +52,7 @@ public class LoginInterceptor implements HandlerInterceptor
                                                  return new JwtException("Authorization header is missing");
                                              }));
 
+        log.debug("Token: {}", token);
         try
         {
             Claims claims   = this.jwtUtil.verifyAndParseToken(token);
@@ -60,20 +61,26 @@ public class LoginInterceptor implements HandlerInterceptor
             if (! this.isUserValid(username))
             {
                 log.error("User not found in Redis: {}", username);
+
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return false;
+
+                throw new JwtException("User not found in Redis: " + username);
             }
 
             this.threadLocalUtil.set(claims);
+
             log.debug("Token validated successfully for user: {}", username);
             response.setStatus(HttpServletResponse.SC_OK);
+
             return true;
         }
         catch (JwtException e)
         {
             log.error("JWT verification failed: {}", e.getMessage());
+
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
+
+            throw new JwtException(e.getMessage());
         }
     }
 
