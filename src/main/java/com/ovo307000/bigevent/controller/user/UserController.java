@@ -159,21 +159,36 @@ public class UserController
         return this.processFindResult(this.userService.updateAvatar(avatarUrl));
     }
 
+    /**
+     * 通过PATCH请求更新用户密码
+     *
+     * @param params 包含旧密码、新密码和重复新密码的参数映射
+     *
+     * @return 更新操作的结果和用户数据传输对象
+     *
+     * @throws NoSuchAlgorithmException 如果密码加密算法不存在
+     */
     @PatchMapping("/updatePwd")
     public Result<UserDTO> updatePassword(@RequestBody Map<String, Object> params) throws NoSuchAlgorithmException
     {
+        // 从参数中获取密码信息
         String oldPassword    = (String) params.get("old_pwd");
         String newPassword    = (String) params.get("new_pwd");
         String repeatPassword = (String) params.get("re_pwd");
 
+        // 验证输入的密码是否符合要求
         if (! this.isPasswordInputValid(oldPassword, newPassword, repeatPassword))
         {
+            // 如果密码输入不合法，返回失败结果
             return Result.fail(UserStatus.PASSWORD_CANNOT_BE_EMPTY, null);
         }
 
+        // 调用用户服务来更新密码
         UserDTO result = this.userService.updateUserPassword(newPassword, oldPassword, repeatPassword);
+        // 删除用户在Redis中的令牌，因为密码更新了，令牌失效，务必要在更新完成后删除，否则如果更新时抛出异常，令牌删除，导致拦截器无法正常放行
         this.deleteUserTokenFromRedis(Objects.requireNonNull(this.userService.findUserByThreadLocal())
                                              .getUsername());
+        // 处理并返回更新结果
         return this.processFindResult(result);
     }
 
