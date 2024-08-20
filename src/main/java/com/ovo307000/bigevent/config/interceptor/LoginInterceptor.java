@@ -9,99 +9,107 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Component("loginInterceptor")
 public class LoginInterceptor implements HandlerInterceptor
 {
-    private static final Logger log        = LoggerFactory.getLogger(LoginInterceptor.class);
-    private static       Long   START_TIME = System.currentTimeMillis();
+
+    private static final Logger log         = LoggerFactory.getLogger(LoginInterceptor.class);
+    private static final String AUTH_HEADER = "Authorization";
+
+    private static long START_TIME = System.currentTimeMillis();
 
     private final JWTUtil                 jwtUtil;
     private final ThreadLocalUtil<Claims> threadLocalUtil;
+    private final StringRedisTemplate     stringRedisTemplate;
 
-    public LoginInterceptor(JWTUtil jwtUtil, ThreadLocalUtil<Claims> threadLocalUtil)
+    public LoginInterceptor(JWTUtil jwtUtil,
+                            ThreadLocalUtil<Claims> threadLocalUtil,
+                            StringRedisTemplate stringRedisTemplate)
     {
-        this.jwtUtil         = jwtUtil;
-        this.threadLocalUtil = threadLocalUtil;
+        this.jwtUtil             = jwtUtil;
+        this.threadLocalUtil     = threadLocalUtil;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
-    /**
-     * 在处理请求之前进行预处理，主要用于检查JWT令牌的有效性
-     *
-     * @param request  当前的HTTP请求对象，用于获取请求头等信息
-     * @param response 当前的HTTP响应对象，用于设置响应状态码
-     * @param handler  当前请求的处理对象，未直接使用但不能为null
-     *
-     * @return 返回true表示放行请求，false表示拦截请求
-     *
-     * @throws JwtException 如果解析令牌失败，则抛出此异常
-     */
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request,
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) throws JwtException
     {
-        // 获取请求头中的Authorization信息，这是JWT令牌所在的位置
-        String requestHeader = Objects.requireNonNull(request.getHeader("Authorization"), "Authorization is null");
+        String token = Optional.of(request.getHeader(AUTH_HEADER))
+                               .orElseThrow((() ->
+                                             {
+                                                 log.error("Authorization header is missing");
 
-        // 尝试验证和解析JWT令牌
+                                                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+                                                 return new JwtException("Authorization header is missing");
+                                             }));
+
         try
         {
-            // 验证并解析令牌，如果成功，将claims（载荷）信息保存到线程局部变量中，以供后续使用
-            final Claims claims = this.jwtUtil.verifyAndParseToken(requestHeader);
+            Claims claims   = this.jwtUtil.verifyAndParseToken(token);
+            String username = claims.get("username", String.class);
 
-            // 记录日志，表示令牌验证和解析成功
-            log.debug("Verify and parse JWT token successfully, claims: {}", claims);
+            if (! this.isUserValid(username))
+            {
+                log.error("User not found in Redis: {}", username);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return false;
+            }
 
-            // 将解析后的claims信息存入线程局部变量，供后续操作使用
             this.threadLocalUtil.set(claims);
-            // 设置响应状态码为200，表示请求有效
+            log.debug("Token validated successfully for user: {}", username);
             response.setStatus(HttpServletResponse.SC_OK);
-
-            // 返回true，放行请求
             return true;
         }
-        // 如果解析令牌失败，则捕获JwtException异常
-        catch (JwtException jwtException)
+        catch (JwtException e)
         {
-            // 记录日志，表示令牌验证和解析失败
-            log.error("Verify and parse JWT token failed, error: {}", jwtException.getMessage());
-            // 设置响应状态码为401，表示请求无效（令牌无效），拦截
+            log.error("JWT verification failed: {}", e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-            throw new JwtException("Verify and parse JWT token failed, error: " + jwtException.getMessage());
+            return false;
         }
     }
 
+    private boolean isUserValid(String username)
+    {
+        return this.stringRedisTemplate.opsForValue()
+                                       .get(username) != null;
+    }
 
-    /**
-     * 在请求处理完成后调用此方法，但在视图渲染之前（即Controller方法调用之后）
-     * 该方法主要用于清理与当前请求关联的线程本地变量，以避免内存泄漏和数据污染
-     *
-     * @param request  HTTP请求对象，用于获取请求信息
-     * @param response HTTP响应对象，用于控制响应行为
-     * @param handler  请求处理方法本身或其代理对象，可用于获取处理方法的相关信息
-     * @param ex       在请求处理过程中可能抛出的异常，如果存在的话
-     */
     @Override
     public void afterCompletion(@NotNull HttpServletRequest request,
                                 @NotNull HttpServletResponse response,
                                 @NotNull Object handler,
                                 Exception ex)
     {
-        // 清理线程本地变量中的JWT载荷信息
-        // 这一步是必要的，因为每个请求都可能包含不同的JWT，为避免内存泄漏和数据混淆，
-        // 在处理完请求后应该清除与该请求相关的数据
-        Optional.ofNullable(this.threadLocalUtil.get())
-                .ifPresent((Claims claims) -> this.threadLocalUtil.remove());
+        this.threadLocalUtil.remove();
+        log.info("Request completed in {} ms", this.getProcessingTime());
+    }
 
-        log.info("Request processing time: {}ms", (System.currentTimeMillis() - START_TIME));
-
-        START_TIME = System.currentTimeMillis();
+    /**
+     * 获取自上次调用以来的处理时间
+     * <p>
+     * 此方法用于计算自上一次调用以来所经过的时间，单位为毫秒
+     * 它通过记录当前时间和开始时间的差值来实现
+     *
+     * @return 自上次调用以来经过的时间，以毫秒为单位
+     */
+    private long getProcessingTime()
+    {
+        // 记录当前时间
+        long currentTime = System.currentTimeMillis();
+        // 计算并存储自上次调用以来经过的时间
+        long elapsedTime = currentTime - START_TIME;
+        // 更新开始时间为当前时间，为下一次调用做准备
+        START_TIME = currentTime;
+        // 返回经过的时间
+        return elapsedTime;
     }
 }

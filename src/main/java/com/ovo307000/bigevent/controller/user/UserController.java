@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Validated
 @RequestMapping("/user")
@@ -26,13 +29,17 @@ public class UserController
 {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private final UserService userService;
-    private final JWTUtil     jwtUtil;
+    private final UserService         userService;
+    private final JWTUtil             jwtUtil;
+    private final StringRedisTemplate stringRedisTemplate;
 
-    public UserController(@Qualifier(value = "userUserService") UserService userService, JWTUtil jwtUtil)
+    public UserController(@Qualifier(value = "userUserService") UserService userService,
+                          JWTUtil jwtUtil,
+                          StringRedisTemplate stringRedisTemplate)
     {
-        this.userService = userService;
-        this.jwtUtil     = jwtUtil;
+        this.userService         = userService;
+        this.jwtUtil             = jwtUtil;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     /**
@@ -65,6 +72,10 @@ public class UserController
         log.info("Trying to login user: {}", username);
 
         String token = this.jwtUtil.generateTokenByUsernameAndPassword(username, password);
+
+        // 缓存用户信息
+        ValueOperations<String, String> stringStringValueOperations = this.stringRedisTemplate.opsForValue();
+        stringStringValueOperations.set(username, token, 72, TimeUnit.HOURS);
 
         log.debug("Token generated: {}", token);
 
