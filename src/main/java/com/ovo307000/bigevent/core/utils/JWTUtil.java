@@ -50,7 +50,7 @@ public class JWTUtil
     //  2024年8月10日 18点52分
     //      生成加密的JWT Token，待实现
 
-    /**
+        /**
      * 验证和解析JWT Token
      * <p>
      * 通过使用SHA算法验证JWT Token，并解析出其中的声明（Claims）
@@ -62,17 +62,18 @@ public class JWTUtil
      */
     public Claims verifyAndParseToken(String token)
     {
-        // 使用Jwts.parser()创建一个解析器对象
-        // .verifyWith(this.key)设置用于验证JWT的密钥，确保Token在传输过程中未被篡改
-        // .build()构建完成解析器
-        // .parseSignedClaims(token)解析并验证JWT Token
-        // .getPayload()获取解析后的Payload部分
+        // 创建JWT解析器
         return Jwts.parser()
+                   // 指定用于验证JWT的密钥
                    .verifyWith(this.key)
+                   // 构建解析器
                    .build()
+                   // 解析并验证JWT Token
                    .parseSignedClaims(token)
+                   // 获取解析后的Payload部分
                    .getPayload();
     }
+
 
 
     /**
@@ -105,24 +106,31 @@ public class JWTUtil
      * 以及基于配置的过期时间。使用随机生成的唯一ID和私密密钥对令牌进行签名。
      *
      * @param claims 用户信息的集合，将作为JWT的载荷部分
+     *
      * @return 生成的JWT令牌字符串
      */
     public String generateToken(Map<String, Object> claims)
     {
         // 构建JWT令牌，设置载荷为提供的用户信息
+        Instant instant = Instant.now();
+
+        // 生成随机唯一ID，用于区分不同的JWT令牌
+        String uuid = UUID.randomUUID()
+                          .toString();
+
+        // 使用Jwts.builder()构建JWT令牌
         return Jwts.builder()
                    .claims(claims)
-                   // 使用私密密钥对令牌进行签名
+                   // 使用私密密钥对令牌进行签名，确保令牌的完整性和防篡改
                    .signWith(this.key)
                    // 设置令牌的签发时间为当前时间
-                   .issuedAt(Date.from(Instant.now()))
+                   .issuedAt(Date.from(instant))
                    // 设置令牌的过期时间为当前时间加上配置的过期时长
-                   .expiration(Date.from(Instant.now()
-                                               .plusSeconds(this.jwtProperties.getExpirationOfSeconds())))
+                   .expiration(Date.from(instant.plusSeconds(this.jwtProperties.getExpirationOfSeconds())))
                    // 为令牌生成一个随机的唯一ID
-                   .id(UUID.randomUUID()
-                           .toString())
+                   .id(uuid)
                    // 将所有部分压缩成一个紧凑的JWT字符串
                    .compact();
     }
+
 }
