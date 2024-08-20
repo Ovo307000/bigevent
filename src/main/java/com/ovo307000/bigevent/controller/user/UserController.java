@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -87,9 +86,8 @@ public class UserController
 
     private void saveUserTokenToRedis(String username, String token)
     {
-        ValueOperations<String, String> stringStringValueOperations = this.stringRedisTemplate.opsForValue();
-
-        stringStringValueOperations.set(username, token, 72, TimeUnit.HOURS);
+        this.stringRedisTemplate.opsForValue()
+                                .set(username, token, 72, TimeUnit.HOURS);
     }
 
     @GetMapping("/findUserByNickname")
@@ -136,7 +134,6 @@ public class UserController
                        .orElse(Result.fail(UserStatus.FAILED, null));
     }
 
-    // TODO: 由于不启用拦截，无法获取到当前登录用户的信息，需要完善
     @GetMapping("/userInfo")
     public Result<UserDTO> userInfo(@RequestHeader(AUTH_HEADER) String token)
     {
@@ -174,10 +171,10 @@ public class UserController
             return Result.fail(UserStatus.PASSWORD_CANNOT_BE_EMPTY, null);
         }
 
+        UserDTO result = this.userService.updateUserPassword(newPassword, oldPassword, repeatPassword);
         this.deleteUserTokenFromRedis(Objects.requireNonNull(this.userService.findUserByThreadLocal())
                                              .getUsername());
-
-        return this.processFindResult(this.userService.updateUserPassword(newPassword, oldPassword, repeatPassword));
+        return this.processFindResult(result);
     }
 
     private boolean isPasswordInputValid(@NotNull String... passwords)

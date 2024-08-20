@@ -42,7 +42,7 @@ public class LoginInterceptor implements HandlerInterceptor
                              @NotNull HttpServletResponse response,
                              @NotNull Object handler) throws JwtException
     {
-        String token = Optional.of(request.getHeader(AUTH_HEADER))
+        String token = Optional.ofNullable(request.getHeader(AUTH_HEADER))
                                .orElseThrow((() ->
                                              {
                                                  log.error("Authorization header is missing");
