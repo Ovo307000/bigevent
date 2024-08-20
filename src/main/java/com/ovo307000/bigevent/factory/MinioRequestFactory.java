@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@Component("minioFactory")
+@Component("minioRequestFactory")
 public class MinioRequestFactory
 {
     private final FileUtil fileUtil;
