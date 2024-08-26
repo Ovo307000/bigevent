@@ -5,8 +5,6 @@ import com.ovo307000.bigevent.core.security.encryptor.SHA256Encrypted;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -22,18 +20,15 @@ public class JWTUtil
 {
     private final JWTProperties jwtProperties;
     private final SecretKey     key;
-    private final RedisTemplate redisTemplate;
 
-    public JWTUtil(@Qualifier("jwtProperties") JWTProperties jwtProperties, @Qualifier("redisTemplate")
-    RedisTemplate redisTemplate)
+    public JWTUtil(@Qualifier("jwtProperties") JWTProperties jwtProperties)
     {
         this.jwtProperties = jwtProperties;
 
-        this.key           = this.getSignatureAlgorithm(Objects.requireNonNull(this.jwtProperties.getAlgorithmNameUpperCase(),
+        this.key = this.getSignatureAlgorithm(Objects.requireNonNull(this.jwtProperties.getAlgorithmNameUpperCase(),
                                                                      "Algorithm name is null")
                                                      .trim()
                                                      .toUpperCase());
-        this.redisTemplate = redisTemplate;
     }
 
     /**
