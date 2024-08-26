@@ -3,14 +3,14 @@
         <encoder>
             <pattern>
                 <!-- %green(%date{yyyy-MM-dd HH:mm:ss.SSS}) = 设置日期格式，颜色为绿色 -->
-                <!-- %purple(%relative)                     = 设置自启动以来的时间，颜色为紫色 -->
+                <!-- %relative                              = 设置自启动以来的时间，单位为毫秒 -->
                 <!-- %highlight(%level)                     = 设置日志级别，颜色为随等级变化 -->
                 <!-- %yellow(%thread)                       = 设置线程名，颜色为黄色 -->
                 <!-- %cyan(%logger{36})                     = 设置logger名，长度为36，颜色为青色 -->
                 <!-- %highlight(%msg)                       = 设置日志信息，颜色为随等级变化 -->
                 <!-- %n                                     = 换行 -->
                 <!-- %red(%ex)                              = 设置异常信息，颜色为红色 -->
-                %green(%date{yyyy-MM-dd HH:mm:ss.SSS}) %purple(%relative) %highlight(%level) [%yellow(%thread)] %cyan(%logger{36}) - %highlight(%msg) %n %red(%ex)
+                %green(%date{yyyy-MM-dd HH:mm:ss.SSS} %relative)  %highlight(%5level) [%yellow(%thread)] %cyan(%logger{36}) - %highlight(%msg) %n %red(%ex)
             </pattern>
         </encoder>
     </appender>
