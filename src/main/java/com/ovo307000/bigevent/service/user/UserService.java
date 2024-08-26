@@ -150,7 +150,7 @@ public class UserService
     public UserDTO update(UserDTO user) throws NoSuchAlgorithmException
     {
         // 检查用户是否存在，如果不存在则返回null
-        if (!this.isUserExists(user))
+        if (! this.isUserExists(user))
         {
             return null;
         }

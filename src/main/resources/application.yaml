@@ -16,12 +16,12 @@ spring  :
       hibernate:
         format_sql: true
     open-in-view: true
-  servlet:
+  servlet    :
     multipart:
       max-file-size   : 100MB
       max-request-size: 1000MB
 
-  data   :
+  data       :
     redis:
       url: redis://localhost:6379
 
@@ -64,11 +64,11 @@ bigevent:
 
       email-formats                     : [ gmail.com, yahoo.com, outlook.com, hotmail.com ]
       picture-formats                   : [ jpg, jpeg, png, gif, bmp, webp ]
-  minio    :
+  minio      :
     access-key : cbe23712bf8efa05f7dc8cb4fae868ab
     secret-key : 7cff9f52b026b46a42a2dc9d7c00f9ef0f0e8bdf0ae35a16535452999155ced6
     endpoint   : https://6f2186c3068ec2904175ebeec00ae9d0.r2.cloudflarestorage.com
     token-value: _LiuIkf_Yrd3H-a5KT6QkIUrTwbkJFr4Vw9qnwn4
     bucket-name: bigevent
-  websocket:
+  websocket  :
     endpoint: ws://localhost:8080/ws
